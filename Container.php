@@ -61,41 +61,6 @@ class Container implements \ArrayAccess
             throw new Exceptions\DefinitionNotFound($name);
         }
         
-        $definition = $this->_findDefinition($name)->value;
-        $data       = $this->_findDefinitionData($name);
-        
-        if ($data['__fwk_di_shared'] === true && 
-            isset($data['__fwk_di_shared_inst'])
-        ) {
-            return $this->getShared($name);
-        }
-        
-        if (!$definition instanceof Definition) {
-            $return = $definition;
-        } else {
-            $return = $definition->invoke($this);
-        }
-        
-        if ($data['__fwk_di_shared'] === true) {
-            $sharedId = md5(uniqid('__fwk_di_uniq_instance_'));
-            $data['__fwk_di_shared_inst'] = $sharedId;
-            $this->_updateData($name, $data);
-            $this->set($sharedId, $return);
-        }
-        
-        return $return;
-    }
-    
-    public function getShared($name)
-    {
-        if (!$this->exists($name)) {
-            throw new Exceptions\DefinitionNotFound($name);
-        } elseif (!$this->isShared($name)) {
-            throw new Exception(
-                sprintf("Definition '%s' cannot be shared", $name)
-            );
-        }
-        
         $data       = $this->_findDefinitionData($name);
         
         if ($data['__fwk_di_shared'] === true && 
@@ -104,7 +69,23 @@ class Container implements \ArrayAccess
             return $this->_findDefinition($data['__fwk_di_shared_inst'])->value;
         }
         
-        return null;
+        $definition = $this->_findDefinition($name)->value;
+         
+        if ($definition instanceof Definition) {
+            $return = $definition->invoke($this);
+        } elseif (is_callable($definition)) {
+            $return = call_user_func_array($definition, array($this));
+        } else {
+            $return = $definition;
+        }
+        
+        if ($data['__fwk_di_shared'] === true) {
+            $sharedId = md5(uniqid('__fwk_instances_'));
+            $this->_updateData($name, array('__fwk_di_shared_inst' => $sharedId));
+            $this->set($sharedId, $return, array('__fwk_di_shareof' => $name));
+        }
+        
+        return $return;
     }
     
     /**
@@ -154,7 +135,7 @@ class Container implements \ArrayAccess
      */
     public function exists($name)
     {
-        return ($this->_findDefinition($offset) instanceof stdClass);
+        return ($this->_findDefinition($name) instanceof stdClass);
     }
     
     /**
@@ -214,14 +195,16 @@ class Container implements \ArrayAccess
      */
     protected function _findDefinition($name)
     {
+        $object = null;
         foreach ($this->store as $obj) {
            $data = $this->store->getInfo();
            if ($data['__fwk_di_name'] == $name) {
-                return $obj;
+                $object = $obj;
+                break;
            }
         }
         
-        return null;
+        return $object;
     }
     
     /**
@@ -232,14 +215,16 @@ class Container implements \ArrayAccess
      */
     protected function _findDefinitionData($name)
     {
+        $return = array();
         foreach ($this->store as $obj) {
            $data = $this->store->getInfo();
            if ($data['__fwk_di_name'] == $name) {
-                return $data;
+                $return = $data;
+                break;
            }
         }
         
-        return array();
+        return $return;
     }
     
     protected function _updateData($name, array $newData)
@@ -248,7 +233,7 @@ class Container implements \ArrayAccess
            $data = $this->store->getInfo();
            if ($data['__fwk_di_name'] == $name) {
                 $this->store->setInfo(array_merge($newData, $data));
-                return;
+                break;
            }
         }
     }
