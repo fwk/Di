@@ -33,7 +33,7 @@ class ContainerTest extends \PHPUnit_Framework_TestCase {
         $callable = function () { $a = new \stdClass(); $a->mt = microtime(true); return $a; };
         $this->object->set('test', $callable);
         $this->assertTrue($this->object->exists('test'));
-        
+        $this->assertFalse($this->object->isShared('test'));
         $inst = $this->object->get('test');
         $this->assertInstanceOf('\stdClass', $inst);
         $this->assertFalse($inst === $this->object->get('test'));
@@ -44,7 +44,7 @@ class ContainerTest extends \PHPUnit_Framework_TestCase {
         $callable = function () { $a = new \stdClass(); $a->mt = microtime(true); return $a; };
         $this->object->set('test', $callable, true);
         $this->assertTrue($this->object->exists('test'));
-        
+        $this->assertTrue($this->object->isShared('test'));
         $inst = $this->object->get('test');
         $this->assertInstanceOf('\stdClass', $inst);
         $this->assertTrue($inst === $this->object->get('test'));
@@ -53,5 +53,10 @@ class ContainerTest extends \PHPUnit_Framework_TestCase {
     public function testInvalidDefinition() {
         $this->setExpectedException('Fwk\Di\Exceptions\DefinitionNotFound');
         $inst = $this->object->get('test');
+    }
+    
+    public function testInvalidSharedDefinition() {
+        $this->setExpectedException('Fwk\Di\Exceptions\DefinitionNotFound');
+        $inst = $this->object->isShared('test');
     }
 }
