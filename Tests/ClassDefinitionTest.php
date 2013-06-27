@@ -96,7 +96,7 @@ class ClassDefinitionTest extends \PHPUnit_Framework_TestCase {
     public function testInvokeWithErroneousArguments() {
         $this->object = new ClassDefinition('DirectoryIterator');
         $this->object->addArgument(new Reference('invalid_ref'));
-        $this->setExpectedException('Fwk\Di\Exceptions\InvalidClassDefinition');
+        $this->setExpectedException('\Fwk\Di\Exceptions\InvalidClassDefinition');
         $it = $this->object->invoke($this->getContainer());
     }
     
@@ -116,5 +116,31 @@ class ClassDefinitionTest extends \PHPUnit_Framework_TestCase {
         $it = $this->object->invoke($this->getContainer());
         $this->assertInstanceOf('DirectoryIterator', $it);
         $this->assertEquals($it->getRealPath(), sys_get_temp_dir());
+    }
+    
+    public function testInvokeWithMethodCalls() {
+        $this->object = new ClassDefinition('Fwk\Di\Reference');
+        $this->object->addArgument('testRef');
+        $this->object->addMethodCall('setName', array('changedName'));
+        $inst = $this->object->invoke($this->getContainer());
+        $this->assertInstanceOf('\Fwk\Di\Reference', $inst);
+        $this->assertEquals("changedName", (string)$inst);
+    }
+    
+    public function testInvokeWithRemovedMethodCalls() {
+        $this->testInvokeWithMethodCalls();
+        $this->object->removeMethodClass('setName');
+        $inst = $this->object->invoke($this->getContainer());
+        $this->assertInstanceOf('\Fwk\Di\Reference', $inst);
+        $this->assertEquals("testRef", $inst);
+    }
+    
+    public function testInvokeWithInvalidMethodCallsArguments() {
+        $this->object = new ClassDefinition('Fwk\Di\Reference');
+        $this->object->addArgument('testRef');
+        $this->object->addMethodCall('setName', array('@invalid_ref'));
+        
+        $this->setExpectedException('\Fwk\Di\Exceptions\InvalidClassDefinition');
+        $this->object->invoke($this->getContainer());
     }
 }

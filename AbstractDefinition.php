@@ -19,19 +19,6 @@ abstract class AbstractDefinition
     {
         return $this->arguments;
     }
-
-    /**
-     *
-     * @param array $arguments
-     * 
-     * @return Definition 
-     */
-    public function setArguments(array $arguments)
-    {
-        $this->arguments = $arguments;
-        
-        return $this;
-    }
     
     /**
      *
