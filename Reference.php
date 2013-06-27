@@ -1,7 +1,10 @@
 <?php
 namespace Fwk\Di;
 
-class Reference
+use Fwk\Di\Exceptions\DefinitionNotFound;
+use Fwk\Di\Exceptions\InvalidReference;
+
+class Reference implements Invokable
 {
     /**
      * Container's reference name
@@ -19,7 +22,7 @@ class Reference
      */
     public function __construct($name)
     {
-        $this->name = $name;
+        $this->name = (string)$name;
     }
     
     /**
@@ -37,11 +40,32 @@ class Reference
      * 
      * @param string $name Container's reference name
      * 
-     * @return void
+     * @return Container
      */
     public function setName($name)
     {
         $this->name = $name;
+        
+        return $this;
+    }
+    
+    /**
+     *
+     * @param Container $container 
+     * 
+     * @return mixed
+     */
+    public function invoke(Container $container)
+    {
+        $return = false;
+        
+        try {
+            $return = $container->get($this->name);
+        } catch(DefinitionNotFound $exp) {
+            throw new InvalidReference($this->name, $exp);
+        }
+        
+        return $return;
     }
     
     /**

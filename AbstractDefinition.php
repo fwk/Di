@@ -3,30 +3,91 @@ namespace Fwk\Di;
 
 abstract class AbstractDefinition
 {
-    protected $parameters = array();
-    protected $container;
+    /**
+     *
+     * @var array
+     */
+    protected $arguments = array();
     
-    public function getParameters()
+    abstract function __construct($name, array $parameters = array());
+    
+    /**
+     *
+     * @return array
+     */
+    public function getArguments()
     {
-        return $this->parameters;
+        return $this->arguments;
     }
 
-    public function setParameters(array $parameters)
+    /**
+     *
+     * @param array $arguments
+     * 
+     * @return Definition 
+     */
+    public function setArguments(array $arguments)
     {
-        $this->parameters = $parameters;
+        $this->arguments = $arguments;
+        
+        return $this;
     }
     
     /**
      *
-     * @return Container
+     * @param mixed $argument
+     * 
+     * @return Definition 
      */
-    public function getContainer()
+    public function addArgument($argument)
     {
-        return $this->container;
+        $this->arguments[] = $argument;
+        
+        return $this;
     }
-
-    public function setContainer(Container $container)
+    
+    /**
+     *
+     * @param array $arguments 
+     * 
+     * @return Definition
+     */
+    public function addArguments(array $arguments)
     {
-        $this->container = $container;
+        $this->arguments += $arguments;
+        
+        return $this;
+    }
+    
+    /**
+     *
+     * @param Container $container
+     * 
+     * @return array
+     */
+    protected function getConstructorArguments(Container $container)
+    {
+        $return = array();
+        foreach ($this->arguments as $idx => $arg) {
+            if (is_string($arg) && strpos($arg, '@', 0) === 0) {
+                $arg = new Reference(substr($arg,1));
+            }
+            
+            try {
+                $return[] = (($arg instanceof Invokable) 
+                    ? $arg->invoke($container) 
+                    : $arg
+                );
+            } catch(\Fwk\Di\Exception $exp) {
+                throw new Exceptions\InvalidArgument($idx, $exp);
+            }
+        }
+        
+        return $return;
+    }
+    
+    public static function factory($name, array $arguments = array())
+    {
+        return new static($name);
     }
 }

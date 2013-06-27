@@ -59,4 +59,56 @@ class ContainerTest extends \PHPUnit_Framework_TestCase {
         $this->setExpectedException('Fwk\Di\Exceptions\DefinitionNotFound');
         $inst = $this->object->isShared('test');
     }
+    
+    /**
+     *
+     */
+    public function testUnregisterNotShared() {
+        $this->testNonSharedSetAndGetCallable();
+        
+        $this->assertTrue($this->object->exists('test'));
+        $inst = $this->object->get('test');
+        $this->object->unregister('test');
+        $this->assertFalse($this->object->exists('test'));
+    }
+    
+    /**
+     *
+     */
+    public function testUnregisterShared() {
+        $this->testSharedSetAndGetCallable();
+        
+        $this->assertTrue($this->object->exists('test'));
+        $this->assertTrue($this->object->isShared('test'));
+        $inst = $this->object->get('test');
+        $this->object->unregister('test');
+        $this->assertFalse($this->object->exists('test'));
+    }
+    
+    public function testUnregisterInvalidSharedDefinition() {
+        $this->setExpectedException('Fwk\Di\Exceptions\DefinitionNotFound');
+        $inst = $this->object->unregister('test');
+    }
+    
+    public function testNotSharedSetAndGetDefinition() {
+        $this->assertFalse($this->object->exists('test'));
+        $def = ClassDefinition::factory('stdClass');
+        $this->object->set('test', $def, false);
+        $this->assertTrue($this->object->exists('test'));
+        $this->assertFalse($this->object->isShared('test'));
+        $inst = $this->object->get('test');
+        $this->assertInstanceOf('\stdClass', $inst);
+        $this->assertFalse($inst === $this->object->get('test'));
+    }
+    
+    public function testSharedSetAndGetDefinition() {
+        $this->assertFalse($this->object->exists('test'));
+        $def = ClassDefinition::factory('stdClass');
+        $this->object->set('test', $def, true);
+        $this->assertTrue($this->object->exists('test'));
+        $this->assertTrue($this->object->isShared('test'));
+        $inst = $this->object->get('test');
+        $this->assertInstanceOf('\stdClass', $inst);
+        $this->assertTrue($inst === $this->object->get('test'));
+    }
 }
