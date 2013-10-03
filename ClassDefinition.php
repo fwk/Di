@@ -6,12 +6,9 @@ class ClassDefinition extends AbstractDefinition implements Invokable
     protected $className;
     protected $methodCalls  = array();
     
-    public function __construct($className, $arguments = array(), 
-        $methodCalls = array()
-    ) {
+    public function __construct($className, array $arguments = array()) {
         $this->className    = $className;
         $this->arguments    = $arguments;
-        $this->methodCalls  = $methodCalls;
     }
     
     public function invoke(Container $container)
