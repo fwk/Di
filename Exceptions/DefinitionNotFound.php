@@ -13,6 +13,6 @@ class DefinitionNotFound extends Exception
 {
     public function __construct($name)
     {
-        parent::__construct("Definition '$name' is unregistered", null, null);
+        parent::__construct("Definition '$name' is not registered", null, null);
     }
 }

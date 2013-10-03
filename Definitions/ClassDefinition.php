@@ -3,8 +3,10 @@ namespace Fwk\Di\Definitions;
 
 use Fwk\Di\Definition;
 use Fwk\Di\Container;
+use Fwk\Di\AbstractDefinition;
+use Fwk\Di\Reference;
 
-class ClassDefinition implements Definition
+class ClassDefinition extends AbstractDefinition implements Definition
 {
     protected $className;
     protected $methodCalls  = array();
@@ -19,6 +21,20 @@ class ClassDefinition implements Definition
     
     public function invoke(Container $container)
     {
+        $className = $this->className;
+        if ($className instanceof Reference) {
+            $className = $container->get($className);
+        }
+        
+        if (!is_string($className)) {
+            throw new \InvalidArgumentException("Classname must be a string");
+        }
+        
+        $refClass = new \ReflectionClass($className);
+        
+        return $refClass->newInstanceArgs(
+            $this->getComputedParameters($container)
+        );
     }
     
     public function getClassName()

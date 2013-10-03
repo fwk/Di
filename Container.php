@@ -2,7 +2,6 @@
 namespace Fwk\Di;
 
 use \SplObjectStorage;
-use \ArrayAccess;
 use \stdClass;
 
 class Container implements \ArrayAccess
@@ -57,6 +56,10 @@ class Container implements \ArrayAccess
      */
     public function get($name)
     {
+        if ($name instanceof Reference) {
+            $name = $name->getName();
+        }
+        
         if (!$this->exists($name)) {
             throw new Exceptions\DefinitionNotFound($name);
         }

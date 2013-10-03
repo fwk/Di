@@ -16,6 +16,26 @@ abstract class AbstractDefinition
         $this->parameters = $parameters;
     }
     
+    public function getComputedParameters(Container $container)
+    {
+        $result = array();
+        foreach ($this->parameters as $param) {
+            if ($param instanceof Parameter) {
+                $value = $param->getValue();
+                if ($value instanceof Reference) {
+                    $value = $container->get($value);
+                }
+                $result[] = $value;
+            } elseif ($param instanceof Reference) {
+                $result[] = $container->get($param);
+            } else {
+                $result[] = $param;
+            }
+        }
+        
+        return $result;
+    }
+    
     /**
      *
      * @return Container
