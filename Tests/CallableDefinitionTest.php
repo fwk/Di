@@ -41,6 +41,7 @@ class CallableDefinitionTest extends \PHPUnit_Framework_TestCase {
     
     public function testSimpleInvocationError()
     {
+        \PHPUnit_Framework_Error_Notice::$enabled = FALSE;
         $this->object->setCallable(array('SimplyNot', 'callable'));
         $this->setExpectedException('\Fwk\Di\Exceptions\InvalidCallableDefinition');
         $this->object->invoke($this->getContainer());
