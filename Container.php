@@ -66,15 +66,17 @@ class Container implements \ArrayAccess
         
         $data       = $this->_findDefinitionData($name);
         
-        if ($data['__fwk_di_shared'] === true && 
-            isset($data['__fwk_di_shared_inst'])
+        if ($data['__fwk_di_shared'] === true 
+            && isset($data['__fwk_di_shared_inst'])
         ) {
-            return $this->_findDefinition($data['__fwk_di_shared_inst'])->value;
+            return $this->_findDefinition(
+                $data['__fwk_di_shared_inst']
+            )->value;
         }
         
         $definition = $this->_findDefinition($name)->value;
          
-        if ($definition instanceof Definition) {
+        if ($definition instanceof Invokable) {
             $return = $definition->invoke($this);
         } elseif (is_callable($definition)) {
             $return = call_user_func_array($definition, array($this));
@@ -84,7 +86,10 @@ class Container implements \ArrayAccess
         
         if ($data['__fwk_di_shared'] === true) {
             $sharedId = md5(uniqid('__fwk_instances_'));
-            $this->_updateData($name, array('__fwk_di_shared_inst' => $sharedId));
+            $this->_updateData(
+                $name, 
+                array('__fwk_di_shared_inst' => $sharedId)
+            );
             $this->set($sharedId, $return, array('__fwk_di_shareof' => $name));
         }
         
@@ -105,7 +110,16 @@ class Container implements \ArrayAccess
             throw new Exceptions\DefinitionNotFound($name);
         }
         
-        $this->store->detach($this->_findDefinition($name));
+        $definition = $this->_findDefinition($name);
+        $data = $this->_findDefinitionData($name);
+        
+        if ($data['__fwk_di_shared'] === true) {
+            $this->store->detach(
+                $this->_findDefinition($data['__fwk_di_shared_inst'])
+            );
+        }
+        
+        $this->store->detach($definition);
         
         return true;
     }
@@ -175,7 +189,7 @@ class Container implements \ArrayAccess
      */
     public function offsetSet($offset, $value)
     {
-        return $this->register($offset, $value);
+        return $this->set($offset, $value);
     }
     
     /**
