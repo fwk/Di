@@ -96,6 +96,29 @@ class Container implements \ArrayAccess
         return $return;
     }
     
+    public function iniProperties($iniFile, $category = null)
+    {
+        if (!is_file($iniFile) || !is_readable($iniFile)) {
+            throw new Exception('INI file not found/readable: '. $iniFile);
+        }
+        
+        $props = parse_ini_file($iniFile, ($category !== null));
+        if ($category !== null) {
+            $props = (isset($props[$category]) ? $props[$category] : false);
+        }
+        
+        if (!is_array($props))
+        {
+            throw new Exception("No properties found in: $iniFile [$category]");
+        }
+        
+        foreach ($props as $key => $value) {
+            $this->set($key, $value);
+        }
+        
+        return $this;
+    }
+    
     /**
      * Unregisters a definition
      * 

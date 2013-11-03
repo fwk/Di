@@ -74,14 +74,23 @@ abstract class AbstractDefinition
      */
     protected function getConstructorArguments(Container $container)
     {
+        return $this->propertizeArguments($this->arguments, $container);
+    }
+    
+    protected function propertizeArguments(array $args, Container $container)
+    {
         $return = array();
-        foreach ($this->arguments as $idx => $arg) {
+        foreach ($args as $idx => $arg) {
             if (is_string($arg) && strpos($arg, '@', 0) === 0) {
                 $arg = new Reference(substr($arg,1));
             }
             
+            elseif (is_array($arg)) {
+                $arg = $this->propertizeArguments($arg, $container);
+            }
+            
             try {
-                $return[] = (($arg instanceof Invokable) 
+                $return[$idx] = (($arg instanceof Invokable) 
                     ? $arg->invoke($container) 
                     : $arg
                 );
