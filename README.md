@@ -33,7 +33,7 @@ use Fwk\Di\ClassDefinition;
 
 $container = new Container();
 
-// viewHelper
+// database
 $dbDef = new ClassDefinition('App\Services\Database');
 $dbDef->addMethodCall('connect');
 
