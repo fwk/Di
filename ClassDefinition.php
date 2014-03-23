@@ -61,7 +61,6 @@ class ClassDefinition extends AbstractDefinition implements Invokable
         }
         
         $reflect    = new \ReflectionClass($this->className);
-        $return     = null;
         
         if (null !== $reflect->getConstructor()) {
             $args = array();

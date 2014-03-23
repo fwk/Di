@@ -142,6 +142,7 @@ class Container implements \ArrayAccess
             );
         }
         
+        
         $this->store->detach($definition);
         
         return true;
