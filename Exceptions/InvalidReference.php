@@ -48,8 +48,8 @@ class InvalidReference extends Exception
     /**
      * Constructor
      * 
-     * @param string     $name Reference name
-     * @param \Exception $prev Previous Exception
+     * @param string          $name Reference name
+     * @param null|\Exception $prev Previous Exception
      * 
      * @return void
      */

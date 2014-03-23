@@ -137,7 +137,12 @@ class Container implements ArrayAccess
                 $name, 
                 array('__fwk_di_shared_inst' => $sharedId)
             );
-            $this->set($sharedId, $return, array('__fwk_di_shareof' => $name));
+            $this->set(
+                $sharedId, 
+                $return, 
+                true, 
+                array('__fwk_di_shareof' => $name)
+            );
         }
         
         return $return;

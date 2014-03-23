@@ -48,8 +48,8 @@ class InvalidClassDefinition extends Exception
     /**
      * Constructor
      * 
-     * @param string     $name Name of the Definition
-     * @param \Exception $prev Previous Exception
+     * @param string          $name Name of the Definition
+     * @param null|\Exception $prev Previous Exception
      * 
      * @return void
      */

@@ -48,8 +48,8 @@ class ClassNotFound extends Exception
     /**
      * Constructor
      * 
-     * @param string     $name Class name
-     * @param \Exception $prev Previous Exception
+     * @param string          $name Class name
+     * @param null|\Exception $prev Previous Exception
      * 
      * @return void
      */

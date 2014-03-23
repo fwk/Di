@@ -48,8 +48,8 @@ class DefinitionNotFound extends Exception
     /**
      * Constructor
      * 
-     * @param string     $name Definition name
-     * @param \Exception $prev Previous Exception
+     * @param string          $name Definition name
+     * @param null|\Exception $prev Previous Exception
      * 
      * @return void
      */

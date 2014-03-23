@@ -48,8 +48,8 @@ class InvalidCallableDefinition extends Exception
     /**
      * Constructor
      * 
-     * @param mixed      $callable Callable
-     * @param \Exception $prev     Previous Exception
+     * @param mixed           $callable Callable
+     * @param null|\Exception $prev     Previous Exception
      * 
      * @return void
      */

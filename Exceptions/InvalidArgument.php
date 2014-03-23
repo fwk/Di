@@ -48,8 +48,8 @@ class InvalidArgument extends Exception
     /**
      * Constructor
      * 
-     * @param integer    $index Idx of the Argument
-     * @param \Exception $prev  Previous Exception
+     * @param integer         $index Idx of the Argument
+     * @param null|\Exception $prev  Previous Exception
      * 
      * @return void
      */
