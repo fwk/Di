@@ -15,7 +15,7 @@ class InvalidCallableDefinition extends Exception
     public function __construct($callable, $prev = null)
     {
         parent::__construct(
-            "Callable '$callable' is invalid", 
+            "Callable ". (is_array($callable) ? implode(', ', $callable) : $callable) ." is invalid", 
             null, 
             $prev
         );
