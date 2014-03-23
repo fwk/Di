@@ -1,12 +1,56 @@
 <?php
+/**
+ * Fwk
+ *
+ * Copyright (c) 2011-2012, Julien Ballestracci <julien@nitronet.org>.
+ * All rights reserved.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+ * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * PHP Version 5.3
+ *
+ * @category  DependencyInjection
+ * @package   Fwk\Di
+ * @author    Julien Ballestracci <julien@nitronet.org>
+ * @copyright 2011-2014 Julien Ballestracci <julien@nitronet.org>
+ * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
+ * @link      http://www.nitronet.org/fwk
+ */
 namespace Fwk\Di;
 
 use \SplObjectStorage;
 use \stdClass;
+use \ArrayAccess;
 
-class Container implements \ArrayAccess
+/**
+ * Container
+ * 
+ * THE Dependency Injection Container.
+ *
+ * @category Container
+ * @package  Fwk\Di
+ * @author   Julien Ballestracci <julien@nitronet.org>
+ * @license  http://www.opensource.org/licenses/bsd-license.php  BSD License
+ * @link     http://www.nitronet.org/fwk
+ */
+class Container implements ArrayAccess
 {
     /**
+     * The objects store
      * @var SplObjectStorage
      */
     protected $store;
@@ -24,20 +68,23 @@ class Container implements \ArrayAccess
     /**
      * Registers a definition
      * 
-     * @param string  $name         Identifier
-     * @param mixed   $definition   Definition, callable or value
-     * @param boolean $shared       Should the instance be "shared" (singleton)
-     * @param array   $data         Meta-data associated with this definition
+     * @param string  $name       Identifier
+     * @param mixed   $definition Definition, callable or value
+     * @param boolean $shared     Should the instance be "shared" (singleton)
+     * @param array   $data       Meta-data associated with this definition
      * 
      * @return Container 
      */
     public function set($name, $definition, $shared = false, 
         array $data = array()
     ) {
-        $data = array_merge(array(
-            '__fwk_di_name'     => $name,
-            '__fwk_di_shared'   => $shared
-        ), $data);
+        $data = array_merge(
+            array(
+                '__fwk_di_name'     => $name,
+                '__fwk_di_shared'   => $shared
+            ), 
+            $data
+        );
 
         $object = new stdClass();
         $object->value = $definition;
@@ -64,17 +111,17 @@ class Container implements \ArrayAccess
             throw new Exceptions\DefinitionNotFound($name);
         }
         
-        $data       = $this->_findDefinitionData($name);
+        $data       = $this->findDefinitionData($name);
         
         if ($data['__fwk_di_shared'] === true 
             && isset($data['__fwk_di_shared_inst'])
         ) {
-            return $this->_findDefinition(
+            return $this->findDefinition(
                 $data['__fwk_di_shared_inst']
             )->value;
         }
         
-        $definition = $this->_findDefinition($name)->value;
+        $definition = $this->findDefinition($name)->value;
          
         if ($definition instanceof Invokable) {
             $return = $definition->invoke($this);
@@ -86,7 +133,7 @@ class Container implements \ArrayAccess
         
         if ($data['__fwk_di_shared'] === true) {
             $sharedId = md5(uniqid('__fwk_instances_'));
-            $this->_updateData(
+            $this->updateData(
                 $name, 
                 array('__fwk_di_shared_inst' => $sharedId)
             );
@@ -96,6 +143,17 @@ class Container implements \ArrayAccess
         return $return;
     }
     
+    /**
+     * Loads properties from an INI file as definitions. 
+     * Theses properties can then be referenced like @propName in other 
+     * definitions.
+     * 
+     * @param string $iniFile  Path/to/file.ini
+     * @param string $category The INI category to be parsed
+     * 
+     * @return Container
+     * @throws Exception
+     */
     public function iniProperties($iniFile, $category = null)
     {
         if (!is_file($iniFile) || !is_readable($iniFile)) {
@@ -107,8 +165,7 @@ class Container implements \ArrayAccess
             $props = (isset($props[$category]) ? $props[$category] : false);
         }
         
-        if (!is_array($props))
-        {
+        if (!is_array($props)) {
             throw new Exception("No properties found in: $iniFile [$category]");
         }
         
@@ -133,17 +190,19 @@ class Container implements \ArrayAccess
             throw new Exceptions\DefinitionNotFound($name);
         }
         
-        $definition = $this->_findDefinition($name);
-        $data = $this->_findDefinitionData($name);
+        $definition = $this->findDefinition($name);
+        $data = $this->findDefinitionData($name);
         
         if ($data['__fwk_di_shared'] === true) {
-            $this->store->detach(
-                $this->_findDefinition($data['__fwk_di_shared_inst'])
-            );
+            $def = $this->findDefinition($data['__fwk_di_shared_inst']);
+            if ($def != null) {
+                $this->store->detach($def);
+            }
         }
         
-        
-        $this->store->detach($definition);
+        if ($definition != null) {
+            $this->store->detach($definition);
+        }
         
         return true;
     }
@@ -162,7 +221,7 @@ class Container implements \ArrayAccess
             throw new Exceptions\DefinitionNotFound($name);
         }
         
-        $data = $this->_findDefinitionData($name);
+        $data = $this->findDefinitionData($name);
         
         return (bool)$data['__fwk_di_shared'];
     }
@@ -176,7 +235,7 @@ class Container implements \ArrayAccess
      */
     public function exists($name)
     {
-        return ($this->_findDefinition($name) instanceof stdClass);
+        return ($this->findDefinition($name) instanceof stdClass);
     }
     
     /**
@@ -229,53 +288,63 @@ class Container implements \ArrayAccess
     }
     
     /**
-     *
+     * Search the store for a definition
+     * 
      * @param string $name Identifier
      * 
      * @return stdClass
      */
-    protected function _findDefinition($name)
+    protected function findDefinition($name)
     {
         $object = null;
         foreach ($this->store as $obj) {
-           $data = $this->store->getInfo();
-           if ($data['__fwk_di_name'] == $name) {
+            $data = $this->store->getInfo();
+            if ($data['__fwk_di_name'] == $name) {
                 $object = $obj;
                 break;
-           }
+            }
         }
         
         return $object;
     }
     
     /**
-     *
+     * Search and retrieve a definition's meta-data
+     * 
      * @param string $name Identifier
      * 
      * @return array
      */
-    protected function _findDefinitionData($name)
+    protected function findDefinitionData($name)
     {
         $return = array();
         foreach ($this->store as $obj) {
-           $data = $this->store->getInfo();
-           if ($data['__fwk_di_name'] == $name) {
+            $data = $this->store->getInfo();
+            if ($data['__fwk_di_name'] == $name) {
                 $return = $data;
                 break;
-           }
+            }
         }
         
         return $return;
     }
     
-    protected function _updateData($name, array $newData)
+    /**
+     * Updates the meta-data of a Definition
+     * 
+     * @param string $name    Definition name
+     * @param array  $newData Definition's meta-data
+     * 
+     * @return void
+     */
+    protected function updateData($name, array $newData)
     {
         foreach ($this->store as $obj) {
-           $data = $this->store->getInfo();
-           if ($data['__fwk_di_name'] == $name) {
+            $data = $this->store->getInfo();
+            if ($data['__fwk_di_name'] == $name) {
                 $this->store->setInfo(array_merge($newData, $data));
                 break;
-           }
+            }
         }
     }
 }
