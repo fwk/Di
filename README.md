@@ -3,6 +3,10 @@
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/fwk/Di/badges/quality-score.png?s=1f384822977a9e5c941466034ab35a2266d132d4)](https://scrutinizer-ci.com/g/fwk/Di/)
 [![Build Status](https://secure.travis-ci.org/fwk/Di.png?branch=master)](http://travis-ci.org/fwk/Di)
 [![Code Coverage](https://scrutinizer-ci.com/g/fwk/Di/badges/coverage.png?s=1bd36bba6a4e9e86d219c91fcaef55c846f676a1)](https://scrutinizer-ci.com/g/fwk/Di/)
+[![Latest Stable Version](https://poser.pugx.org/fwk/di/v/stable.png)](https://packagist.org/packages/fwk/di) 
+[![Total Downloads](https://poser.pugx.org/fwk/di/downloads.png)](https://packagist.org/packages/fwk/di) 
+[![Latest Unstable Version](https://poser.pugx.org/fwk/di/v/unstable.png)](https://packagist.org/packages/fwk/di) 
+[![License](https://poser.pugx.org/fwk/di/license.png)](https://packagist.org/packages/fwk/di)
 
 Dependency Injection Container for PHP 5.3+ 
 
