@@ -50,6 +50,17 @@ abstract class AbstractDefinition
     protected $arguments = array();
     
     /**
+     * Constructor
+     * 
+     * @param mixed        $arg       Mixed argument
+     * @param array<mixed> $arguments List of arguments
+     * 
+     * @abstract
+     * @return void
+     */
+    abstract public function __construct($arg, array $arguments = array());
+            
+    /**
      * Return the list of arguments
      * 
      * @return array<mixed>
@@ -137,14 +148,14 @@ abstract class AbstractDefinition
     /**
      * Factory method
      * 
-     * @param string       $name      Name of the Definition
+     * @param mixed        $arg       Mixed argument
      * @param array<mixed> $arguments List of arguments
      * 
      * @return Definition
      * @static
      */
-    public static function factory($name, array $arguments = array())
+    public static function factory($arg, array $arguments = array())
     {
-        return new static($name, $arguments);
+        return new static($arg, $arguments);
     }
 }
