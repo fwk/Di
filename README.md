@@ -94,6 +94,33 @@ $container->set(
 );
 ```
 
+### Use the Container Builder
+
+The ContainerBuilder allows you to write definition in an Xml file:
+
+``` xml
+<?xml version="1.0" encoding="UTF-8"?>
+<dependency-injection>
+    <class-definition name="myObj" class="Fwk\Di\ClassDefinition" shared="true">
+        <argument>\stdClass</argument>
+        <call method="addArgument">
+            <argument>ArgOne</argument>
+        </call>
+    </class-definition>
+    <definition name="testDef">valueOfDefinition</definition>
+</dependency-injection>
+```
+
+Then, you load the definitions when needed:
+``` php
+use Fwk\Di\Xml\ContainerBuilder;
+
+$builder = new ContainerBuilder();
+
+/* a new container will be created if $container is null */
+$container = $builder->execute('./di-services.xml', $container);
+```
+
 ## Legal 
 
 Fwk is licensed under the 3-clauses BSD license. Please read LICENSE for full details.
