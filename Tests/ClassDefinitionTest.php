@@ -107,7 +107,7 @@ class ClassDefinitionTest extends \PHPUnit_Framework_TestCase {
         $this->object->addArgument(new Reference('temp.dir'));
         $it = $this->object->invoke($this->getContainer());
         $this->assertInstanceOf('DirectoryIterator', $it);
-        $this->assertEquals($it->getRealPath(), sys_get_temp_dir());
+        $this->assertEquals($it->getPath(), sys_get_temp_dir());
     }
     
     public function testInvokeWithReferencesShortcuts() {
@@ -115,7 +115,7 @@ class ClassDefinitionTest extends \PHPUnit_Framework_TestCase {
         $this->object->addArgument('@temp.dir');
         $it = $this->object->invoke($this->getContainer());
         $this->assertInstanceOf('DirectoryIterator', $it);
-        $this->assertEquals($it->getRealPath(), sys_get_temp_dir());
+        $this->assertEquals($it->getPath(), sys_get_temp_dir());
     }
     
     public function testInvokeWithMethodCalls() {
