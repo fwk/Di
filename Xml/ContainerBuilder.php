@@ -132,16 +132,16 @@ class ContainerBuilder
         Container $container
     ) {
         foreach ($classDefs as $name => $infos) {
+            $shared = (strtolower($infos['shared']) == "true" ? true : false);
             $def = new ClassDefinition(
                 $infos['className'], 
-                $infos['arguments'], 
-                (strtolower($infos['shared']) == "true" ? true : false)
+                $infos['arguments']
             );
             foreach ($infos['methodsCalls'] as $mnfos) {
                 $def->addMethodCall($mnfos['method'], $mnfos['arguments']);
             }
             
-            $container->set($name, $def);
+            $container->set($name, $def, $shared);
         }
     }
     
