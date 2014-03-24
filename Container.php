@@ -153,8 +153,8 @@ class Container implements ArrayAccess
      * Theses properties can then be referenced like @propName in other 
      * definitions.
      * 
-     * @param string $iniFile  Path/to/file.ini
-     * @param string $category The INI category to be parsed
+     * @param string      $iniFile  Path/to/file.ini
+     * @param null|string $category The INI category to be parsed
      * 
      * @return Container
      * @throws Exception
@@ -297,7 +297,7 @@ class Container implements ArrayAccess
      * 
      * @param string $name Identifier
      * 
-     * @return stdClass
+     * @return null|stdClass
      */
     protected function findDefinition($name)
     {
