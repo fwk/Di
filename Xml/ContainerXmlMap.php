@@ -30,44 +30,65 @@
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link      http://www.nitronet.org/fwk
  */
-namespace Fwk\Di\Exceptions;
+namespace Fwk\Di\Xml;
 
-use Fwk\Di\Exception;
+use Fwk\Xml\Map;
+use Fwk\Xml\Path;
 
 /**
- * InvalidCallableDefinition
+ * ContainerXmlMap
  * 
- * @category Exceptions
+ * Describes the Map to parse an Xml container.
+ *
+ * @category Xml
  * @package  Fwk\Di
  * @author   Julien Ballestracci <julien@nitronet.org>
  * @license  http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link     http://www.nitronet.org/fwk
  */
-class InvalidCallableDefinition extends Exception
+class ContainerXmlMap extends Map
 {
     /**
      * Constructor
      * 
-     * @param mixed           $callable Callable
-     * @param null|\Exception $prev     Previous Exception
+     * Initialize Map paths to return an array of definitions
      * 
-     * @return void
+     * @void
      */
-    public function __construct($callable, $prev = null)
+    public function __construct()
     {
-        if (is_array($callable)) {
-            $class = (isset($callable[0]) ? $callable[0] : 'undefined');
-            $method = (isset($callable[1]) ?$callable[1] : 'undefined');
-            
-            $txt = sprintf(
-                "%s::%s",
-                (is_object($class) ? get_class($class) : (string)$class),
-                (string)$method
-            );
-        } else {
-            $txt = (string)$callable;
-        }
+        $this->add(
+            Path::factory(
+                '/dependency-injection/class-definition', 
+                'classDefs', 
+                array()
+            )->loop(true, '@name')
+            ->attribute('shared')
+            ->attribute('class', 'className')
+            ->addChildren(
+                Path::factory('argument', 'arguments', array())
+                ->loop(true)
+                ->value('value')
+            )->addChildren(
+                Path::factory('call', 'methodsCalls', array())
+                ->loop(true)
+                ->attribute('method')
+                ->addChildren(
+                    Path::factory('argument', 'arguments', array())
+                    ->loop(true)
+                    ->value('value')
+                )
+            )
+        );
         
-        parent::__construct("Callable $txt is invalid", null, $prev);
+        $this->add(
+            Path::factory(
+                '/dependency-injection/definition', 
+                'definitions', 
+                array()
+            )->loop(true, '@name')
+            ->attribute('shared')
+            ->value('value')
+        );
     }
 }

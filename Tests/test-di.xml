@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dependency-injection>
+    <class-definition name="myObj" class="Fwk\Di\ClassDefinition" shared="true">
+        <argument>\stdClass</argument>
+        <call method="addArgument">
+            <argument>ArgOne</argument>
+        </call>
+    </class-definition>
+    <definition name="testDef">valueOfDefinition</definition>
+</dependency-injection>
