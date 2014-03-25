@@ -140,7 +140,7 @@ class ClassDefinitionTest extends \PHPUnit_Framework_TestCase {
         $this->object->addArgument('testRef');
         $this->object->addMethodCall('setName', array('@invalid_ref'));
         
-        $this->setExpectedException('\Fwk\Di\Exceptions\InvalidClassDefinition');
+        $this->setExpectedException('\Fwk\Di\Exceptions\InvalidCallableDefinition');
         $this->object->invoke($this->getContainer());
     }
 }
