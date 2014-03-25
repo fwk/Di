@@ -55,6 +55,6 @@ class InvalidArgument extends Exception
      */
     public function __construct($index, \Exception $prev = null)
     {
-        parent::__construct("Argument #'$index' is invalid", null, $prev);
+        parent::__construct("Argument #$index is invalid", null, $prev);
     }
 }

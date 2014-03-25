@@ -60,7 +60,7 @@ class InvalidCallableDefinition extends Exception
             $method = (isset($callable[1]) ?$callable[1] : 'undefined');
             
             $txt = sprintf(
-                "%s::%s",
+                "%s::%s()",
                 (is_object($class) ? get_class($class) : (string)$class),
                 (string)$method
             );

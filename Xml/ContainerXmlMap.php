@@ -90,5 +90,12 @@ class ContainerXmlMap extends Map
             ->attribute('shared')
             ->value('value')
         );
+        
+        $this->add(
+            Path::factory('/dependency-injection/ini', 'ini', array())
+            ->loop(true)
+            ->attribute('category')
+            ->value('value')
+        );
     }
 }

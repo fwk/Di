@@ -124,11 +124,7 @@ class ClassDefinition extends AbstractDefinition implements Invokable
         foreach ($this->methodCalls as $idx => $methodCall) {
             $callable = $methodCall->getCallable();
             $methodCall->setCallable(array($instance, $callable));
-            try {
-                $methodCall->invoke($container);
-            } catch(Exception $exp) {
-                throw new Exceptions\InvalidClassDefinition($this->className, $exp);
-            }
+            $methodCall->invoke($container);
             $methodCall->setCallable($callable);
         }
     }

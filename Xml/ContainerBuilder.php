@@ -94,10 +94,35 @@ class ContainerBuilder
         
         $results = $this->map->execute($file);
         
+        $this->applyIniFiles($results['ini'], $container, $file);
         $this->applyDefinitions($results['definitions'], $container);
         $this->applyClassDefinitions($results['classDefs'], $container);
         
         return $container;
+    }
+    
+    
+    /**
+     * Converts XML definitions from parsing results
+     * 
+     * @param array     $definitions Parsing results
+     * @param Container $container   The Di Container
+     * 
+     * @return void
+     */
+    protected function applyIniFiles(array $inis, Container $container, 
+        XmlFile $file
+    ) {
+        foreach ($inis as $infos) {
+            $container->iniProperties(
+                str_replace(
+                    ':baseDir', 
+                    dirname($file->getRealPath()), 
+                    $infos['value']
+                ), 
+                $infos['category']
+            );
+        }
     }
     
     /**
