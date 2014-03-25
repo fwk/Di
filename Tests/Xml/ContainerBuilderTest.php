@@ -47,4 +47,13 @@ class ContainerBuilderTest extends \PHPUnit_Framework_TestCase {
         $this->object->setMap(new \Fwk\Xml\Maps\Rss());
         $this->assertInstanceOf('Fwk\Xml\Maps\Rss', $this->object->getMap());
     }
+    
+    public function testIniProperty()
+    {
+        $container = new \Fwk\Di\Container();
+        $this->assertFalse($container->exists('iniProp'));
+        $this->object->execute(__DIR__ .'/../test-di.xml', $container);
+        $this->assertTrue($container->exists('iniProp'));
+        $this->assertEquals("testing", $container->get('iniProp'));
+    }
 }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dependency-injection>
+    <ini>:baseDir/test-props.ini</ini>
     <class-definition name="myObj" class="Fwk\Di\ClassDefinition" shared="true">
         <argument>\stdClass</argument>
         <call method="addArgument">

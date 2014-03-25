@@ -105,8 +105,9 @@ class ContainerBuilder
     /**
      * Converts XML definitions from parsing results
      * 
-     * @param array     $definitions Parsing results
-     * @param Container $container   The Di Container
+     * @param array     $inis      Parsing results
+     * @param Container $container The Di Container
+     * @param XmlFile   $file      The XmlFile instance
      * 
      * @return void
      */
