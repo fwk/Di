@@ -103,8 +103,8 @@ abstract class AbstractDefinition
     /**
      * Returns all arguments (computed)
      * 
-     * @param Container    $container  The Di Container
-     * @param null|string  $definition Name of the current definition (if any)
+     * @param Container   $container  The Di Container
+     * @param null|string $definition Name of the current definition (if any)
      * 
      * @return array<mixed>
      */

@@ -36,6 +36,7 @@ use Fwk\Xml\Map;
 use Fwk\Di\Container;
 use Fwk\Xml\XmlFile;
 use Fwk\Di\ClassDefinition;
+use Fwk\Di\ArrayDefinition;
 
 /**
  * ContainerBuilder
@@ -194,10 +195,6 @@ class ContainerBuilder
                 $key = (empty($mnfos['key']) ? null : $mnfos['key']);
                 $val = $this->transformValueType($mnfos['value']);
                 
-                if (is_string($val)) {
-                    $val = $container->propertizeString($val);
-                }
-                
                 if (!empty($key)) {
                     $array[$key] = $val;
                 } else {
@@ -205,7 +202,7 @@ class ContainerBuilder
                 }
             }
             
-            $container->set($name, $array, $shared);
+            $container->set($name, new ArrayDefinition($array), $shared);
         }
     }
     

@@ -30,51 +30,73 @@
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link      http://www.nitronet.org/fwk
  */
-namespace Fwk\Di\Exceptions;
-
-use Fwk\Di\Exception;
-use Fwk\Di\CallableDefinition;
+namespace Fwk\Di;
 
 /**
- * InvalidCallableDefinition
+ * ArrayDefinition
  * 
- * @category Exceptions
+ * Represents a PHP Array definition
+ *
+ * @category Definition
  * @package  Fwk\Di
  * @author   Julien Ballestracci <julien@nitronet.org>
  * @license  http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link     http://www.nitronet.org/fwk
  */
-class InvalidCallableDefinition extends Exception
+class ArrayDefinition extends AbstractDefinition implements Invokable
 {
+    /**
+     * The array
+     * @var array
+     */
+    protected $array;
+    
     /**
      * Constructor
      * 
-     * @param mixed           $callable   Callable
-     * @param null|string     $definition Name of the current definition (if any)
-     * @param null|\Exception $prev       Previous Exception
+     * @param array<mixed> $array     The PHP array
+     * @param array<mixed> $arguments List of arguments
      * 
      * @return void
      */
-    public function __construct($callable, $definition = null,
-        $prev = null
-    ) {
-        if (is_array($callable)) {
-            $class = (isset($callable[0]) ? $callable[0] : 'undefined');
-            $method = (isset($callable[1]) ?$callable[1] : 'undefined');
-            
-            $txt = sprintf(
-                "%s::%s()",
-                (is_object($class) ? get_class($class) : (string)$class),
-                (is_string($method) ? $method : print_r($method, true))
-            );
-        } else {
-            $txt = (string)$callable;
-        }
-        
-        parent::__construct(
-            "[$definition] Callable $txt is invalid", 
-            null, 
-            $prev
-        );
+    public function __construct($array, array $arguments = array())
+    {
+        $this->array        = $array;
+        $this->arguments    = $arguments;
+    }
+    
+    /**
+     * Calls $this->callable and return its value
+     * 
+     * @param Container   $container The Di Container
+     * @param null|string $name      Name of the definition (if any)
+     * 
+     * @return array
+     */
+    public function invoke(Container $container, $name = null)
+    {
+        return $this->propertizeArguments($this->array, $container, $name);
+    }
+    
+    /**
+     * Returns the array
+     * 
+     * @return array<mixed>
+     */
+    public function getArray()
+    {
+        return $this->array;
+    }
+    
+    /**
+     * Defines the array
+     * 
+     * @param array<mixed> $array The callable function
+     * 
+     * @return void
+     */
+    public function setArray(array $array)
+    {
+        $this->array = $array;
     }
 }

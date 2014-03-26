@@ -132,7 +132,10 @@ class ClassDefinition extends AbstractDefinition implements Invokable
                 $callable = $container->propertizeString($callable);
             }
             
-            $methodCall->setCallable(array($instance, $callable));
+            if (!is_callable($callable)) {
+                $callable = array($instance, $callable);
+            }
+            $methodCall->setCallable($callable);
             $methodCall->invoke($container, $definition);
             $methodCall->setCallable($callable);
         }
