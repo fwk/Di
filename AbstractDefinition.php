@@ -126,6 +126,7 @@ abstract class AbstractDefinition
     {
         $return = array();
         foreach ($args as $idx => $arg) {
+            $arg = $this->transformValueType($arg);
             if (is_string($arg)) {
                 $arg = $container->propertizeString($arg);
             }
@@ -147,6 +148,34 @@ abstract class AbstractDefinition
         }
         
         return $return;
+    }
+    
+    /**
+     * Transforms a string to a type, if known:
+     * 
+     * - boolean: true / false
+     * - null: null
+     * 
+     * @param string $value The initial string value
+     * 
+     * @return mixed
+     */
+    protected function transformValueType($value)
+    {
+        if (!is_string($value)) {
+            return $value;
+        }
+        
+        $value = trim($value);
+        if (strtolower($value) === "true") {
+            $value = true;
+        } elseif (strtolower($value) === "false") {
+            $value = false;
+        } elseif (strtolower($value) === "null") {
+            $value = null;
+        }
+        
+        return $value;
     }
     
     /**
