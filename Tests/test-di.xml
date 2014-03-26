@@ -6,9 +6,10 @@
         <call method="addArgument">
             <argument>ArgOne</argument>
         </call>
-    </class-definition>
+    </class-definition> 
     <definition name="testDef">valueOfDefinition</definition>
     <array-definition name="arrayDef">
         <param key="debug">true</param>
+        <param key="iniProp">:iniProp</param>
     </array-definition>
 </dependency-injection>

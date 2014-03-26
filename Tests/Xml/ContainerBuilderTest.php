@@ -55,4 +55,14 @@ class ContainerBuilderTest extends \PHPUnit_Framework_TestCase {
         $this->object->execute(__DIR__ .'/../test-di.xml', $container);
         $this->assertEquals('testing', $container->getProperty('iniProp'));
     }
+    
+    public function testIniPropertyInArrayDefinition()
+    {
+        $container = new \Fwk\Di\Container();
+        $this->object->execute(__DIR__ .'/../test-di.xml', $container);
+        $this->assertEquals('testing', $container->getProperty('iniProp'));
+        $arr = $container->get('arrayDef');
+        $this->assertArrayHasKey('iniProp', $arr);
+        $this->assertEquals('testing', $arr['iniProp']);
+    }
 }
