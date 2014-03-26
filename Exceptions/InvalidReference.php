@@ -48,13 +48,19 @@ class InvalidReference extends Exception
     /**
      * Constructor
      * 
-     * @param string          $name Reference name
-     * @param null|\Exception $prev Previous Exception
+     * @param string          $name       Reference name
+     * @param null|string     $definition Name of the current definition (if any)
+     * @param null|\Exception $prev       Previous Exception
      * 
      * @return void
      */
-    public function __construct($name, \Exception $prev = null)
-    {
-        parent::__construct("Reference '$name' does not exist", null, $prev);
+    public function __construct($name, $definition = null,
+        \Exception $prev = null
+    ) {
+        parent::__construct(
+            "[$definition] Reference '$name' does not exist", 
+            null, 
+            $prev
+        );
     }
 }

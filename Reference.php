@@ -93,18 +93,19 @@ class Reference implements Invokable
     /**
      * Return the value of the referenced Definition
      * 
-     * @param Container $container The Di Container
+     * @param Container   $container The Di Container
+     * @param null|string $name      Name of the current definition (if any)
      * 
      * @return mixed
      */
-    public function invoke(Container $container)
+    public function invoke(Container $container, $name = null)
     {
         $return = false;
         
         try {
             $return = $container->get($this->name);
         } catch(DefinitionNotFound $exp) {
-            throw new InvalidReference($this->name, $exp);
+            throw new InvalidReference($this->name, $name, $exp);
         }
         
         return $return;

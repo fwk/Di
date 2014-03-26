@@ -33,6 +33,7 @@
 namespace Fwk\Di\Exceptions;
 
 use Fwk\Di\Exception;
+use Fwk\Di\CallableDefinition;
 
 /**
  * InvalidCallableDefinition
@@ -48,13 +49,15 @@ class InvalidCallableDefinition extends Exception
     /**
      * Constructor
      * 
-     * @param mixed           $callable Callable
-     * @param null|\Exception $prev     Previous Exception
+     * @param mixed           $callable   Callable
+     * @param null|string     $definition Name of the current definition (if any)
+     * @param null|\Exception $prev       Previous Exception
      * 
      * @return void
      */
-    public function __construct($callable, $prev = null)
-    {
+    public function __construct($callable, $definition = null,
+        $prev = null
+    ) {
         if (is_array($callable)) {
             $class = (isset($callable[0]) ? $callable[0] : 'undefined');
             $method = (isset($callable[1]) ?$callable[1] : 'undefined');
@@ -68,6 +71,10 @@ class InvalidCallableDefinition extends Exception
             $txt = (string)$callable;
         }
         
-        parent::__construct("Callable $txt is invalid", null, $prev);
+        parent::__construct(
+            "[$definition] Callable $txt is invalid", 
+            null, 
+            $prev
+        );
     }
 }

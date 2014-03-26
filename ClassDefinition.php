@@ -32,6 +32,8 @@
  */
 namespace Fwk\Di;
 
+use Fwk\Di\Exceptions\InvalidClassDefinition;
+
 /**
  * ClassDefinition
  * 
@@ -75,22 +77,23 @@ class ClassDefinition extends AbstractDefinition implements Invokable
      * Instanciates $this->className and return the instance.
      * 
      * @param Container $container The Di Container
+     * @param string    $name      Name of the current definition (if any)
      * 
      * @return object
      * @throws Exceptions\InvalidClassDefinition
      */
-    public function invoke(Container $container)
+    public function invoke(Container $container, $name = null)
     {
         if ($this->className instanceof Invokable) {
             try {
-                $this->className = $this->className->invoke($container);
+                $this->className = $this->className->invoke($container, $name);
             } catch(Exception $exp) {
-                throw new Exceptions\InvalidClassDefinition($this->className, $exp);
+                throw new InvalidClassDefinition($this->className, $name, $exp);
             }
         } 
         
         if (!is_string($this->className)) {
-            throw new Exceptions\InvalidClassDefinition(
+            throw new InvalidClassDefinition(
                 '???', 
                 new \InvalidArgumentException(
                     sprintf(
@@ -104,8 +107,8 @@ class ClassDefinition extends AbstractDefinition implements Invokable
             );
         }
         
-        $instance = $this->newInstance($container);
-        $this->executeMethodCalls($instance, $container);
+        $instance = $this->newInstance($container, $name);
+        $this->executeMethodCalls($instance, $container, $name);
         
         return $instance;
     }
@@ -113,14 +116,16 @@ class ClassDefinition extends AbstractDefinition implements Invokable
     /**
      * Executes registered methods (in the order they were added)
      * 
-     * @param object    $instance  The class instance
-     * @param Container $container The Di Container
+     * @param object      $instance   The class instance
+     * @param Container   $container  The Di Container
+     * @param null|string $definition Name of the current definition
      * 
      * @return void
      * @throws Exceptions\InvalidClassDefinition
      */
-    protected function executeMethodCalls($instance, Container $container)
-    {
+    protected function executeMethodCalls($instance, Container $container, 
+        $definition = null
+    ) {
         foreach ($this->methodCalls as $methodCall) {
             $callable = $methodCall->getCallable();
             if (is_string($callable)) {
@@ -128,7 +133,7 @@ class ClassDefinition extends AbstractDefinition implements Invokable
             }
             
             $methodCall->setCallable(array($instance, $callable));
-            $methodCall->invoke($container);
+            $methodCall->invoke($container, $definition);
             $methodCall->setCallable($callable);
         }
     }
@@ -136,13 +141,14 @@ class ClassDefinition extends AbstractDefinition implements Invokable
     /**
      * Instanciates the class ($this->className) 
      * 
-     * @param Container $container The Di Container
+     * @param Container   $container  The Di Container
+     * @param null|string $definition Name of the current definition (if any)
      * 
      * @return object
      * @throws Exceptions\ClassNotFound
      * @throws Exceptions\InvalidClassDefinition
      */
-    protected function newInstance(Container $container)
+    protected function newInstance(Container $container, $definition = null)
     {
         if (is_string($this->className) && strpos($this->className, ':') >= 0) {
             $this->className = $container->propertizeString($this->className);
@@ -156,9 +162,13 @@ class ClassDefinition extends AbstractDefinition implements Invokable
         if (null !== $reflect->getConstructor()) {
             $args = array();
             try {
-                $args = $this->getConstructorArguments($container);
+                $args = $this->getConstructorArguments($container, $definition);
             } catch(Exception $exp) {
-                throw new Exceptions\InvalidClassDefinition($this->className, $exp);
+                throw new InvalidClassDefinition(
+                    $this->className, 
+                    $definition, 
+                    $exp
+                );
             }
             
             $return = $reflect->newInstanceArgs($args);

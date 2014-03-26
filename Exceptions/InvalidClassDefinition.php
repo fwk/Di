@@ -48,13 +48,19 @@ class InvalidClassDefinition extends Exception
     /**
      * Constructor
      * 
-     * @param string          $name Name of the Definition
-     * @param null|\Exception $prev Previous Exception
+     * @param string          $name       Classname of the Definition
+     * @param null|string     $definition Name of the current definition (if any)
+     * @param null|\Exception $prev       Previous Exception
      * 
      * @return void
      */
-    public function __construct($name, \Exception $prev = null)
-    {
-        parent::__construct("Class definition '$name' is invalid", null, $prev);
+    public function __construct($name, $definition = null, 
+        \Exception $prev = null
+    ) {
+        parent::__construct(
+            "[$definition] Class definition '$name' is invalid", 
+            null, 
+            $prev
+        );
     }
 }

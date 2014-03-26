@@ -32,6 +32,8 @@
  */
 namespace Fwk\Di;
 
+use Fwk\Di\Exceptions\InvalidCallableDefinition;
+
 /**
  * CallableDefinition
  * 
@@ -69,22 +71,23 @@ class CallableDefinition extends AbstractDefinition implements Invokable
     /**
      * Calls $this->callable and return its value
      * 
-     * @param Container $container The Di Container
+     * @param Container   $container The Di Container
+     * @param null|string $name      Name of the definition (if any)
      * 
      * @return mixed
      * @throws Exceptions\InvalidCallableDefinition
      */
-    public function invoke(Container $container)
+    public function invoke(Container $container, $name = null)
     {
         if (!is_callable($this->callable)) {
-            throw new Exceptions\InvalidCallableDefinition($this->callable);
+            throw new InvalidCallableDefinition($this->callable, $name);
         }
         
         $args = array();
         try {
-            $args = $this->getConstructorArguments($container);
+            $args = $this->getConstructorArguments($container, $name);
         } catch(Exception $exp) {
-            throw new Exceptions\InvalidCallableDefinition($this->callable, $exp);
+            throw new InvalidCallableDefinition($this->callable, $name, $exp);
         }
         
         return call_user_func_array($this->callable, $args);

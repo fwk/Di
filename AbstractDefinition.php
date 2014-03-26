@@ -103,27 +103,35 @@ abstract class AbstractDefinition
     /**
      * Returns all arguments (computed)
      * 
-     * @param Container $container The Di Container
+     * @param Container    $container  The Di Container
+     * @param null|string  $definition Name of the current definition (if any)
      * 
      * @return array<mixed>
      */
-    protected function getConstructorArguments(Container $container)
-    {
-        return $this->propertizeArguments($this->arguments, $container);
+    protected function getConstructorArguments(Container $container, 
+        $definition = null
+    ) {
+        return $this->propertizeArguments(
+            $this->arguments, 
+            $container, 
+            $definition
+        );
     }
     
     /**
      * Transform arguments to their real value if they are instance of Invokable
      * or a @reference.
      * 
-     * @param array<mixed> $args      List of arguments
-     * @param Container    $container The Di Container
+     * @param array<mixed> $args       List of arguments
+     * @param Container    $container  The Di Container
+     * @param null|string  $definition Name of the current definition (if any)
      * 
      * @return array<mixed>
      * @throws Exceptions\InvalidArgument
      */
-    protected function propertizeArguments(array $args, Container $container)
-    {
+    protected function propertizeArguments(array $args, Container $container,
+        $definition = null
+    ) {
         $return = array();
         foreach ($args as $idx => $arg) {
             $arg = $this->transformValueType($arg);
@@ -134,16 +142,16 @@ abstract class AbstractDefinition
             if (is_string($arg) && strpos($arg, '@', 0) === 0) {
                 $arg = new Reference(substr($arg, 1));
             } elseif (is_array($arg)) {
-                $arg = $this->propertizeArguments($arg, $container);
+                $arg = $this->propertizeArguments($arg, $container, $definition);
             }
             
             try {
                 $return[$idx] = (($arg instanceof Invokable) 
-                    ? $arg->invoke($container) 
+                    ? $arg->invoke($container, $definition) 
                     : $arg
                 );
             } catch(\Fwk\Di\Exception $exp) {
-                throw new Exceptions\InvalidArgument($idx, $exp);
+                throw new Exceptions\InvalidArgument($idx, $definition, $exp);
             }
         }
         

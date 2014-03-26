@@ -48,13 +48,19 @@ class InvalidArgument extends Exception
     /**
      * Constructor
      * 
-     * @param integer         $index Idx of the Argument
-     * @param null|\Exception $prev  Previous Exception
+     * @param integer         $index      Idx of the Argument
+     * @param null|string     $definition Name of the current definition (if any)
+     * @param null|\Exception $prev       Previous Exception
      * 
      * @return void
      */
-    public function __construct($index, \Exception $prev = null)
-    {
-        parent::__construct("Argument #$index is invalid", null, $prev);
+    public function __construct($index, $definition = null,
+        \Exception $prev = null
+    ) {
+        parent::__construct(
+            "[$definition] Argument #$index is invalid", 
+            null, 
+            $prev
+        );
     }
 }

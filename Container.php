@@ -130,7 +130,7 @@ class Container implements ArrayAccess
         $definition = $this->findDefinition($name)->value;
          
         if ($definition instanceof Invokable) {
-            $return = $definition->invoke($this);
+            $return = $definition->invoke($this, $name);
         } elseif (is_callable($definition)) {
             $return = call_user_func_array($definition, array($this));
         } else {

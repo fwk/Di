@@ -49,8 +49,9 @@ interface Invokable
      * Invoke and return the result.
      *
      * @param Container $container The Di Container
+     * @param string    $name      Name of the current definition (if any)
      * 
      * @return mixed
      */
-    public function invoke(Container $container);
+    public function invoke(Container $container, $name = null);
 }
