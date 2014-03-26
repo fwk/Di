@@ -56,6 +56,12 @@ class Container implements ArrayAccess
     protected $store;
     
     /**
+     * Container Properties
+     * @var array
+     */
+    protected $properties = array();
+    
+    /**
      * Constructor
      * 
      * @return void
@@ -174,11 +180,75 @@ class Container implements ArrayAccess
             throw new Exception("No properties found in: $iniFile [$category]");
         }
         
-        foreach ($props as $key => $value) {
-            $this->set($key, $value);
-        }
+        $this->properties = array_merge($props, $this->properties);
         
         return $this;
+    }
+    
+    /**
+     * Returns a property (or $default if not defined) 
+     * 
+     * @param string $propName The property name
+     * @param mixed  $default  Default value if the property is not defined
+     * 
+     * @return mixed
+     */
+    public function getProperty($propName, $default = null)
+    {
+        return (array_key_exists($propName, $this->properties) ? 
+            $this->properties[$propName] : 
+            $default
+        );
+    }
+    
+    /**
+     * Defines a property.
+     * 
+     * If the $value is null, the property will be unset.
+     * 
+     * It recommended to store only strings as property values. Register a
+     * new Di definition for any other type.
+     * 
+     * @param string $propName Property name
+     * @param string $value    The prop value
+     * 
+     * @return Container
+     */
+    public function setProperty($propName, $value)
+    {
+        if (array_key_exists($propName, $this->properties) && $value === null) {
+            unset($this->properties[$propName]);
+            
+            return $this;
+        }
+        
+        $this->properties[$propName] = $value;
+        
+        return $this;
+    }
+    
+    
+    /**
+     * Transform properties references to their respective value
+     * 
+     * @param string $str String to be transformed
+     * 
+     * @return string
+     */
+    public function propertizeString($str)
+    {
+        $replaces = array();
+        foreach ($this->properties as $key => $val) {
+            if (is_string($val)) {
+                $replaces[':'. $key] = $val;
+            }
+        }
+        
+        return str_replace(
+            array_keys($replaces), 
+            array_values($replaces), 
+            $str
+        );
     }
     
     /**

@@ -94,8 +94,10 @@ class ContainerBuilder
         
         $results = $this->map->execute($file);
         
+        $container->setProperty('packageDir', dirname($file->getRealPath()));
         $this->applyIniFiles($results['ini'], $container, $file);
         $this->applyDefinitions($results['definitions'], $container);
+        $this->applyArrayDefinitions($results['arrayDefs'], $container);
         $this->applyClassDefinitions($results['classDefs'], $container);
         
         return $container;
@@ -139,9 +141,9 @@ class ContainerBuilder
     ) {
         foreach ($definitions as $name => $infos) {
             $container->set(
-                $name, 
-                $infos['value'],
-                (strtolower($infos['shared']) == "true" ? true : false)
+                $container->propertizeString($name), 
+                $container->propertizeString($infos['value']),
+                $this->transformValueType($infos['shared'])
             );
         }
     }
@@ -158,17 +160,77 @@ class ContainerBuilder
         Container $container
     ) {
         foreach ($classDefs as $name => $infos) {
-            $shared = (strtolower($infos['shared']) == "true" ? true : false);
+            $shared = $this->transformValueType($infos['shared']);
             $def = new ClassDefinition(
                 $infos['className'], 
                 $infos['arguments']
             );
             foreach ($infos['methodsCalls'] as $mnfos) {
-                $def->addMethodCall($mnfos['method'], $mnfos['arguments']);
+                $def->addMethodCall(
+                    $container->propertizeString($mnfos['method']), 
+                    $mnfos['arguments']
+                );
             }
             
             $container->set($name, $def, $shared);
         }
+    }
+    
+    /**
+     * Converts XML Array definitions from parsing results
+     * 
+     * @param array     $arrayDefs Parsing results
+     * @param Container $container The Di Container
+     * 
+     * @return void
+     */
+    protected function applyArrayDefinitions(array $arrayDefs, 
+        Container $container
+    ) {
+        foreach ($arrayDefs as $name => $infos) {
+            $shared = $this->transformValueType($infos['shared']);
+            $array  = array();
+            foreach ($infos['params'] as $mnfos) {
+                $key = (empty($mnfos['key']) ? null : $mnfos['key']);
+                $val = $this->transformValueType($mnfos['value']);
+                
+                if (is_string($val)) {
+                    $val = $container->propertizeString($val);
+                }
+                
+                if (!empty($key)) {
+                    $array[$key] = $val;
+                } else {
+                    $array[] = $val;
+                }
+            }
+            
+            $container->set($name, $array, $shared);
+        }
+    }
+    
+    /**
+     * Transforms a string to a type, if known:
+     * 
+     * - boolean: true / false
+     * - null: null
+     * 
+     * @param string $value The initial string value
+     * 
+     * @return mixed
+     */
+    protected function transformValueType($value)
+    {
+        $value = trim($value);
+        if (strtolower($value) === "true") {
+            $value = true;
+        } elseif (strtolower($value) === "false") {
+            $value = false;
+        } elseif (strtolower($value) === "null") {
+            $value = null;
+        }
+        
+        return $value;
     }
     
     /**

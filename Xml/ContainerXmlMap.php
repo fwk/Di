@@ -97,5 +97,20 @@ class ContainerXmlMap extends Map
             ->attribute('category')
             ->value('value')
         );
+        
+        $this->add(
+            Path::factory(
+                '/dependency-injection/array-definition', 
+                'arrayDefs', 
+                array()
+            )->loop(true, '@name')
+            ->attribute('shared')
+            ->addChildren(
+                Path::factory('param', 'params', array())
+                ->loop(true)
+                ->attribute('key')
+                ->value('value')
+            )    
+        );
     }
 }

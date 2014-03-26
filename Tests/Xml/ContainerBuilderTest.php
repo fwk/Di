@@ -51,9 +51,8 @@ class ContainerBuilderTest extends \PHPUnit_Framework_TestCase {
     public function testIniProperty()
     {
         $container = new \Fwk\Di\Container();
-        $this->assertFalse($container->exists('iniProp'));
+        $this->assertFalse($container->getProperty('iniProp', false));
         $this->object->execute(__DIR__ .'/../test-di.xml', $container);
-        $this->assertTrue($container->exists('iniProp'));
-        $this->assertEquals("testing", $container->get('iniProp'));
+        $this->assertEquals('testing', $container->getProperty('iniProp'));
     }
 }

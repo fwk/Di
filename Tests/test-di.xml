@@ -8,4 +8,7 @@
         </call>
     </class-definition>
     <definition name="testDef">valueOfDefinition</definition>
+    <array-definition name="arrayDef">
+        <param key="debug">true</param>
+    </array-definition>
 </dependency-injection>

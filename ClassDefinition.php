@@ -121,8 +121,12 @@ class ClassDefinition extends AbstractDefinition implements Invokable
      */
     protected function executeMethodCalls($instance, Container $container)
     {
-        foreach ($this->methodCalls as $idx => $methodCall) {
+        foreach ($this->methodCalls as $methodCall) {
             $callable = $methodCall->getCallable();
+            if (is_string($callable)) {
+                $callable = $container->propertizeString($callable);
+            }
+            
             $methodCall->setCallable(array($instance, $callable));
             $methodCall->invoke($container);
             $methodCall->setCallable($callable);
@@ -140,12 +144,15 @@ class ClassDefinition extends AbstractDefinition implements Invokable
      */
     protected function newInstance(Container $container)
     {
+        if (is_string($this->className) && strpos($this->className, ':') >= 0) {
+            $this->className = $container->propertizeString($this->className);
+        }
+        
         if (!class_exists($this->className, true)) {
             throw new Exceptions\ClassNotFound($this->className);
         }
         
         $reflect    = new \ReflectionClass($this->className);
-        
         if (null !== $reflect->getConstructor()) {
             $args = array();
             try {
@@ -211,7 +218,7 @@ class ClassDefinition extends AbstractDefinition implements Invokable
     {
         $this->methodCalls = array_filter(
             $this->methodCalls, 
-            function($call) use ($methodName) {
+            function ($call) use ($methodName) {
                 return $methodName !== $call->getCallable();
             }
         );

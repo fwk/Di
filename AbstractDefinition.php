@@ -126,6 +126,10 @@ abstract class AbstractDefinition
     {
         $return = array();
         foreach ($args as $idx => $arg) {
+            if (is_string($arg)) {
+                $arg = $container->propertizeString($arg);
+            }
+            
             if (is_string($arg) && strpos($arg, '@', 0) === 0) {
                 $arg = new Reference(substr($arg, 1));
             } elseif (is_array($arg)) {
