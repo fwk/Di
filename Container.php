@@ -180,6 +180,10 @@ class Container implements ArrayAccess
             throw new Exception("No properties found in: $iniFile [$category]");
         }
         
+        foreach ($props as $key => $prop) {
+            $props[$key] = str_replace(':packageDir', dirname($iniFile), $prop);
+        }
+        
         $this->properties = array_merge($props, $this->properties);
         
         return $this;
@@ -196,8 +200,11 @@ class Container implements ArrayAccess
     public function getProperty($propName, $default = null)
     {
         return (array_key_exists($propName, $this->properties) ? 
-            $this->properties[$propName] : 
-            $default
+            $this->propertizeString($this->properties[$propName]) : 
+            (is_string($default) ?
+                $this->propertizeString($default) :
+                $default
+            )
         );
     }
     
