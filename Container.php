@@ -69,6 +69,7 @@ class Container implements ArrayAccess
     public function __construct()
     {
         $this->store = new SplObjectStorage();
+        $this->set('self', $this, true);
     }
     
     /**
