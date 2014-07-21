@@ -81,7 +81,7 @@ class Reference implements Invokable
      * 
      * @param string $name Container's reference name
      * 
-     * @return Container
+     * @return Reference
      */
     public function setName($name)
     {

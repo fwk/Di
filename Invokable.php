@@ -48,8 +48,8 @@ interface Invokable
     /**
      * Invoke and return the result.
      *
-     * @param Container $container The Di Container
-     * @param string    $name      Name of the current definition (if any)
+     * @param Container   $container The Di Container
+     * @param null|string $name      Name of the current definition (if any)
      * 
      * @return mixed
      */

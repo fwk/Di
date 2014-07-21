@@ -76,8 +76,8 @@ class ClassDefinition extends AbstractDefinition implements Invokable
     /**
      * Instanciates $this->className and return the instance.
      * 
-     * @param Container $container The Di Container
-     * @param string    $name      Name of the current definition (if any)
+     * @param Container   $container The Di Container
+     * @param null|string $name      Name of the current definition (if any)
      * 
      * @return object
      * @throws Exceptions\InvalidClassDefinition
@@ -214,10 +214,12 @@ class ClassDefinition extends AbstractDefinition implements Invokable
      */
     public function addMethodCall($methodName, array $arguments = array())
     {
-        return $this->methodCalls[] = new CallableDefinition(
+        $this->methodCalls[] = new CallableDefinition(
             $methodName, 
             $arguments
         );
+
+        return $this;
     }
     
     /**

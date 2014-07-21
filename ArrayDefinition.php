@@ -71,7 +71,7 @@ class ArrayDefinition extends AbstractDefinition implements Invokable
      * @param Container   $container The Di Container
      * @param null|string $name      Name of the definition (if any)
      * 
-     * @return array
+     * @return array<mixed>
      */
     public function invoke(Container $container, $name = null)
     {
