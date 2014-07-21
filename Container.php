@@ -32,7 +32,6 @@
  */
 namespace Fwk\Di;
 
-use \SplObjectStorage;
 use \stdClass;
 use \ArrayAccess;
 
@@ -51,9 +50,15 @@ class Container implements ArrayAccess
 {
     /**
      * The objects store
-     * @var SplObjectStorage
+     * @var array
      */
-    protected $store;
+    protected $store = array();
+
+    /**
+     * Informations about stored objects
+     * @var array
+     */
+    protected $storeData = array();
     
     /**
      * Container Properties
@@ -68,7 +73,6 @@ class Container implements ArrayAccess
      */
     public function __construct()
     {
-        $this->store = new SplObjectStorage();
         $this->set('self', $this, true);
     }
     
@@ -87,16 +91,14 @@ class Container implements ArrayAccess
     ) {
         $data = array_merge(
             array(
-                '__fwk_di_name'     => $name,
                 '__fwk_di_shared'   => $shared
             ), 
             $data
         );
 
-        $object = new stdClass();
-        $object->value = $definition;
-        $this->store->attach($object, $data);
-        
+        $this->store[$name] = $definition;
+        $this->storeData[$name] = $data;
+
         return $this;
     }
     
@@ -118,17 +120,15 @@ class Container implements ArrayAccess
             throw new Exceptions\DefinitionNotFound($name);
         }
         
-        $data       = $this->findDefinitionData($name);
+        $data       = $this->storeData[$name];
         
         if ($data['__fwk_di_shared'] === true 
             && isset($data['__fwk_di_shared_inst'])
         ) {
-            return $this->findDefinition(
-                $data['__fwk_di_shared_inst']
-            )->value;
+            return $this->get($data['__fwk_di_shared_inst']);
         }
         
-        $definition = $this->findDefinition($name)->value;
+        $definition = $this->store[$name];
          
         if ($definition instanceof Invokable) {
             $return = $definition->invoke($this, $name);
@@ -140,12 +140,9 @@ class Container implements ArrayAccess
         
         if ($data['__fwk_di_shared'] === true) {
             $sharedId = md5(uniqid('__fwk_instances_'));
-            $this->updateData(
-                $name, 
-                array('__fwk_di_shared_inst' => $sharedId)
-            );
+            $this->storeData[$name]['__fwk_di_shared_inst'] = $sharedId;
             $this->set(
-                $sharedId, 
+                $sharedId,
                 $return, 
                 true, 
                 array('__fwk_di_shareof' => $name)
@@ -273,19 +270,17 @@ class Container implements ArrayAccess
             throw new Exceptions\DefinitionNotFound($name);
         }
         
-        $definition = $this->findDefinition($name);
-        $data = $this->findDefinitionData($name);
+        $data = $this->storeData[$name];
         
         if ($data['__fwk_di_shared'] === true) {
-            $def = $this->findDefinition($data['__fwk_di_shared_inst']);
-            if ($def != null) {
-                $this->store->detach($def);
+            if ($this->exists($data['__fwk_di_shared_inst'])) {
+                unset($this->store[$data['__fwk_di_shared_inst']]);
+                unset($this->storeData[$data['__fwk_di_shared_inst']]);
             }
         }
-        
-        if ($definition != null) {
-            $this->store->detach($definition);
-        }
+
+        unset($this->storeData[$name]);
+        unset($this->store[$name]);
         
         return true;
     }
@@ -304,7 +299,7 @@ class Container implements ArrayAccess
             throw new Exceptions\DefinitionNotFound($name);
         }
         
-        $data = $this->findDefinitionData($name);
+        $data = $this->storeData[$name];
         
         return (bool)$data['__fwk_di_shared'];
     }
@@ -318,7 +313,7 @@ class Container implements ArrayAccess
      */
     public function exists($name)
     {
-        return ($this->findDefinition($name) instanceof stdClass);
+        return array_key_exists($name, $this->store);
     }
     
     /**
@@ -368,66 +363,5 @@ class Container implements ArrayAccess
     public function offsetUnset($offset)
     {
         return $this->unregister($offset);
-    }
-    
-    /**
-     * Search the store for a definition
-     * 
-     * @param string $name Identifier
-     * 
-     * @return null|stdClass
-     */
-    protected function findDefinition($name)
-    {
-        $object = null;
-        foreach ($this->store as $obj) {
-            $data = $this->store->getInfo();
-            if ($data['__fwk_di_name'] == $name) {
-                $object = $obj;
-                break;
-            }
-        }
-        
-        return $object;
-    }
-    
-    /**
-     * Search and retrieve a definition's meta-data
-     * 
-     * @param string $name Identifier
-     * 
-     * @return array
-     */
-    protected function findDefinitionData($name)
-    {
-        $return = array();
-        foreach ($this->store as $obj) {
-            $data = $this->store->getInfo();
-            if ($data['__fwk_di_name'] == $name) {
-                $return = $data;
-                break;
-            }
-        }
-        
-        return $return;
-    }
-    
-    /**
-     * Updates the meta-data of a Definition
-     * 
-     * @param string $name    Definition name
-     * @param array  $newData Definition's meta-data
-     * 
-     * @return void
-     */
-    protected function updateData($name, array $newData)
-    {
-        foreach ($this->store as $obj) {
-            $data = $this->store->getInfo();
-            if ($data['__fwk_di_name'] == $name) {
-                $this->store->setInfo(array_merge($newData, $data));
-                break;
-            }
-        }
     }
 }
