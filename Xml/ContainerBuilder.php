@@ -144,7 +144,7 @@ class ContainerBuilder
             $container->set(
                 $container->propertizeString($name), 
                 $container->propertizeString($infos['value']),
-                $this->transformValueType($infos['shared'])
+                (bool)$this->transformValueType($infos['shared'])
             );
         }
     }
@@ -161,7 +161,7 @@ class ContainerBuilder
         Container $container
     ) {
         foreach ($classDefs as $name => $infos) {
-            $shared = $this->transformValueType($infos['shared']);
+            $shared = (bool)$this->transformValueType($infos['shared']);
             $def = new ClassDefinition(
                 $infos['className'], 
                 $infos['arguments']
@@ -189,7 +189,7 @@ class ContainerBuilder
         Container $container
     ) {
         foreach ($arrayDefs as $name => $infos) {
-            $shared = $this->transformValueType($infos['shared']);
+            $shared = (bool)$this->transformValueType($infos['shared']);
             $array  = array();
             foreach ($infos['params'] as $mnfos) {
                 $key = (empty($mnfos['key']) ? null : $mnfos['key']);
@@ -214,7 +214,7 @@ class ContainerBuilder
      * 
      * @param string $value The initial string value
      * 
-     * @return mixed
+     * @return null|string|boolean
      */
     protected function transformValueType($value)
     {

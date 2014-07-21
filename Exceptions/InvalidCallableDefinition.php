@@ -33,7 +33,6 @@
 namespace Fwk\Di\Exceptions;
 
 use Fwk\Di\Exception;
-use Fwk\Di\CallableDefinition;
 
 /**
  * InvalidCallableDefinition
