@@ -36,6 +36,7 @@ use ProxyManager\Configuration;
 use ProxyManager\Factory\LazyLoadingValueHolderFactory;
 use ProxyManager\GeneratorStrategy\EvaluatingGeneratorStrategy;
 use ProxyManager\Proxy\LazyLoadingInterface;
+use ProxyManager\Proxy\VirtualProxyInterface;
 
 /**
  * LazyClassDefinition
@@ -57,7 +58,7 @@ class LazyClassDefinition extends ClassDefinition
      * @param Container   $container The Di Container
      * @param null|string $name      Name of the current definition (if any)
      * 
-     * @return object
+     * @return VirtualProxyInterface
      * @throws Exceptions\InvalidClassDefinition
      */
     public function invoke(Container $container, $name = null)
