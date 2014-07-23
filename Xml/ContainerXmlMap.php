@@ -64,6 +64,7 @@ class ContainerXmlMap extends Map
                 array()
             )->loop(true, '@name')
             ->attribute('shared')
+            ->attribute('lazy')
             ->attribute('class', 'className')
             ->addChildren(
                 Path::factory('argument', 'arguments', array())

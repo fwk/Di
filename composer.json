@@ -12,8 +12,14 @@
     ],
     "minimum-stability": "dev",
     "require": {
-        "php": ">=5.3.0",
+        "php": ">=5.3.3",
         "fwk/xml": "dev-master"
+    },
+    "require-dev": {
+        "ocramius/proxy-manager": "dev-master"
+    },
+    "suggest": {
+        "ocramius/proxy-manager": "Allows usage of Lazy Services Loading (ProxyManager)"
     },
     "autoload": {
         "psr-0": {
