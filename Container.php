@@ -65,6 +65,12 @@ class Container implements ArrayAccess
      * @var array
      */
     protected $properties = array();
+
+    /**
+     * Properties Keys (cached)
+     * @var array
+     */
+    protected $propertiesMap = array();
     
     /**
      * Constructor
@@ -179,10 +185,9 @@ class Container implements ArrayAccess
         }
         
         foreach ($props as $key => $prop) {
-            $props[$key] = str_replace(':packageDir', dirname($iniFile), $prop);
+            $this->properties[$key] = str_replace(':packageDir', dirname($iniFile), $prop);
+            $this->propertiesMap[$key] = ":". $key;
         }
-        
-        $this->properties = array_merge($props, $this->properties);
         
         return $this;
     }
@@ -223,10 +228,12 @@ class Container implements ArrayAccess
     {
         if (array_key_exists($propName, $this->properties) && $value === null) {
             unset($this->properties[$propName]);
+            unset($this->propertiesMap[$propName]);
             return $this;
         }
         
         $this->properties[(string)$propName] = (string)$value;
+        $this->propertiesMap[(string)$propName] = ":". (string)$propName;
         
         return $this;
     }
@@ -242,7 +249,7 @@ class Container implements ArrayAccess
     public function propertizeString($str)
     {
         return str_replace(
-            array_map(function($val) { return ":". $val; }, array_keys($this->properties)),
+            array_values($this->propertiesMap),
             array_values($this->properties),
             $str
         );
