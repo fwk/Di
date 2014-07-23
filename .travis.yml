@@ -12,7 +12,12 @@ php:
 before_script:
   - ./.travis.install.sh
 
-script: phpunit
+script:
+  - phpunit --coverage-clover ./build/clover.xml
+
+after_succes:
+  - wget https://scrutinizer-ci.com/ocular.phar
+  - php ocular.phar code-coverage:upload --format=php-clover ./build/clover.xml
 
 matrix:
   allow_failures:
