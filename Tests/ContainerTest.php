@@ -111,4 +111,13 @@ class ContainerTest extends \PHPUnit_Framework_TestCase {
         $this->assertInstanceOf('\stdClass', $inst);
         $this->assertTrue($inst === $this->object->get('test'));
     }
+
+    public function testProperties()
+    {
+        $this->object->setProperty('testPropOne', 'one');
+        $this->object->setProperty('testPropTwo', 'two');
+        $this->object->setProperty('testPhrase', ':testPropOne+:testPropOne=:testPropTwo');
+
+        $this->assertEquals('one+one=two', $this->object->getProperty('testPhrase'));
+    }
 }

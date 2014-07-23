@@ -214,20 +214,19 @@ class Container implements ArrayAccess
      * It recommended to store only strings as property values. Register a
      * new Di definition for any other type.
      * 
-     * @param string $propName Property name
-     * @param string $value    The prop value
+     * @param string      $propName Property name
+     * @param null|string $value    The prop value
      * 
      * @return Container
      */
-    public function setProperty($propName, $value)
+    public function setProperty($propName, $value = null)
     {
         if (array_key_exists($propName, $this->properties) && $value === null) {
             unset($this->properties[$propName]);
-            
             return $this;
         }
         
-        $this->properties[$propName] = $value;
+        $this->properties[(string)$propName] = (string)$value;
         
         return $this;
     }
@@ -242,16 +241,9 @@ class Container implements ArrayAccess
      */
     public function propertizeString($str)
     {
-        $replaces = array();
-        foreach ($this->properties as $key => $val) {
-            if (is_string($val)) {
-                $replaces[':'. $key] = $val;
-            }
-        }
-        
         return str_replace(
-            array_keys($replaces), 
-            array_values($replaces), 
+            array_map(function($val) { return ":". $val; }, array_keys($this->properties)),
+            array_values($this->properties),
             $str
         );
     }
