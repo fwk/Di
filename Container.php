@@ -131,7 +131,7 @@ class Container implements ArrayAccess
         if ($data['__fwk_di_shared'] === true 
             && isset($data['__fwk_di_shared_inst'])
         ) {
-            return $this->get($data['__fwk_di_shared_inst']);
+            return $data['__fwk_di_shared_inst'];
         }
         
         $definition = $this->store[$name];
@@ -145,14 +145,7 @@ class Container implements ArrayAccess
         }
         
         if ($data['__fwk_di_shared'] === true) {
-            $sharedId = md5(uniqid('__fwk_instances_'));
-            $this->storeData[$name]['__fwk_di_shared_inst'] = $sharedId;
-            $this->set(
-                $sharedId,
-                $return, 
-                true, 
-                array('__fwk_di_shareof' => $name)
-            );
+            $this->storeData[$name]['__fwk_di_shared_inst'] = $return;
         }
         
         return $return;
@@ -269,15 +262,6 @@ class Container implements ArrayAccess
             throw new Exceptions\DefinitionNotFound($name);
         }
         
-        $data = $this->storeData[$name];
-        
-        if ($data['__fwk_di_shared'] === true) {
-            if ($this->exists($data['__fwk_di_shared_inst'])) {
-                unset($this->store[$data['__fwk_di_shared_inst']]);
-                unset($this->storeData[$data['__fwk_di_shared_inst']]);
-            }
-        }
-
         unset($this->storeData[$name]);
         unset($this->store[$name]);
         
