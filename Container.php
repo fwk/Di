@@ -129,7 +129,7 @@ class Container extends Dispatcher implements ArrayAccess
             throw new Exceptions\DefinitionNotFound($name);
         }
         
-        $data       = $this->storeData[$name];
+        $data       =& $this->storeData[$name];
         
         if ($data['__fwk_di_shared'] === true 
             && isset($data['__fwk_di_shared_inst'])
@@ -138,7 +138,7 @@ class Container extends Dispatcher implements ArrayAccess
         }
 
         $definition = $this->store[$name];
-        $event      = new BeforeServiceLoadedEvent($this, $name, $definition);
+        $event      = new BeforeServiceLoadedEvent($this, $name, $definition, $data);
 
         $this->notify($event);
 
@@ -153,6 +153,8 @@ class Container extends Dispatcher implements ArrayAccess
             return $return;
         }
 
+        $this->storeData[$name] = $data = $event->getDefinitionData();
+
         if ($definition instanceof Invokable) {
             $return = $definition->invoke($this, $name);
         } elseif (is_callable($definition)) {
@@ -165,7 +167,10 @@ class Container extends Dispatcher implements ArrayAccess
             $this->storeData[$name]['__fwk_di_shared_inst'] = $return;
         }
 
-        $this->notify(new AfterServiceLoadedEvent($this, $name, $definition, $return));
+        $afterEvent = new AfterServiceLoadedEvent($this, $name, $definition, $data, $return);
+        $this->notify($afterEvent);
+
+        $this->storeData[$name] = $afterEvent->getDefinitionData();
 
         return $return;
     }

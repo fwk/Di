@@ -37,15 +37,16 @@ use Fwk\Di\DiEvent;
 
 class AfterServiceLoadedEvent extends DiEvent
 {
-    public function __construct(Container $container, $serviceName, &$definition, &$valueObject)
+    public function __construct(Container $container, $serviceName, &$definition, $definitionData, &$valueObject)
     {
         parent::__construct(
             'afterServiceLoaded',
-            array_merge(array(
+            array(
                 'definition'    => $definition,
                 'serviceName'   => $serviceName,
-                'valueObject'   => $valueObject
-            )),
+                'valueObject'   => $valueObject,
+                'definitionData'    => $definitionData
+            ),
             $container
         );
     }
@@ -78,5 +79,27 @@ class AfterServiceLoadedEvent extends DiEvent
     public function getValueObject()
     {
         return $this->valueObject;
+    }
+
+    /**
+     * Returns the data associated with the definition
+     *
+     * @return array
+     */
+    public function getDefinitionData()
+    {
+        return $this->definitionData;
+    }
+
+    /**
+     * Override/update definition data
+     *
+     * @param array $definitionData
+     *
+     * @return void
+     */
+    public function setDefinitionData(array $definitionData)
+    {
+        $this->definitionData = $definitionData;
     }
 }
