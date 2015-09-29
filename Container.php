@@ -35,7 +35,6 @@ namespace Fwk\Di;
 use Fwk\Di\Events\AfterServiceLoadedEvent;
 use Fwk\Di\Events\BeforeServiceLoadedEvent;
 use Fwk\Events\Dispatcher;
-use \stdClass;
 use \ArrayAccess;
 
 /**
@@ -130,8 +129,8 @@ class Container extends Dispatcher implements ArrayAccess
         }
         
         $data       =& $this->storeData[$name];
-        
-        if ($data['__fwk_di_shared'] === true 
+
+        if ($data['__fwk_di_shared'] === true
             && isset($data['__fwk_di_shared_inst'])
         ) {
             return $data['__fwk_di_shared_inst'];
