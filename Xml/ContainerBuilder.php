@@ -32,6 +32,9 @@
  */
 namespace Fwk\Di\Xml;
 
+use Fwk\Di\ClassDefinition;
+use Fwk\Di\Exception;
+use Fwk\Di\Exceptions\InvalidArgument;
 use Fwk\Xml\Map;
 use Fwk\Di\Container;
 use Fwk\Xml\XmlFile;
@@ -99,7 +102,8 @@ class ContainerBuilder
         $this->applyDefinitions($results['definitions'], $container);
         $this->applyArrayDefinitions($results['arrayDefs'], $container);
         $this->applyClassDefinitions($results['classDefs'], $container);
-        
+        $this->applyListeners($results['listeners'], $container);
+
         return $container;
     }
     
@@ -204,6 +208,37 @@ class ContainerBuilder
             }
             
             $container->set($name, new ArrayDefinition($array), $shared);
+        }
+    }
+
+    /**
+     * Converts XML definitions from parsing results
+     *
+     * @param array     $listeners Parsing results
+     * @param Container $container The Di Container
+     *
+     * @return void
+     */
+    protected function applyListeners(array $listeners, Container $container)
+    {
+        foreach ($listeners as $infos) {
+            $class = $infos['class'];
+            $service = $infos['service'];
+
+            if (empty($class) && empty($service)) {
+                throw new Exception('Invalid Xml Listener: either "class" or "service" attribute must be defined.');
+            }
+
+            if (!empty($class)) {
+                $def = new ClassDefinition($class);
+                $container->addListener($def->invoke($container));
+                continue;
+            }
+
+            if (!$container->exists($service)) {
+                throw new Exception(sprintf('Invalid Xml Listener service ID: "%s"', $service));
+            }
+            $container->addListener($container->get($service));
         }
     }
     

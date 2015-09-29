@@ -113,5 +113,15 @@ class ContainerXmlMap extends Map
                 ->value('value')
             )    
         );
+
+        $this->add(
+            Path::factory(
+                '/dependency-injection/listener',
+                'listeners',
+                array()
+            )->loop(true)
+            ->attribute('class')
+            ->attribute('service')
+        );
     }
 }
