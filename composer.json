@@ -1,8 +1,8 @@
 {
     "name": "fwk/di",
-    "description": "Dependency Injection for Fwk",
+    "description": "Dependency Injection Container for Happy Developers",
     "type": "library",
-    "keywords": ["dependency", "di", "dependency injection", "tools", "lib"],
+    "keywords": ["dependency", "di", "dependency injection", "tools", "lib", "happydeveloper"],
     "license": "BSD",
     "authors": [
         {
@@ -13,7 +13,8 @@
     "minimum-stability": "dev",
     "require": {
         "php": ">=5.3.3",
-        "fwk/xml": "dev-master"
+        "fwk/xml": "dev-master",
+        "fwk/events": "dev-master"
     },
     "require-dev": {
         "ocramius/proxy-manager": "dev-master"

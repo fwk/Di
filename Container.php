@@ -32,6 +32,9 @@
  */
 namespace Fwk\Di;
 
+use Fwk\Di\Events\AfterServiceLoadedEvent;
+use Fwk\Di\Events\BeforeServiceLoadedEvent;
+use Fwk\Events\Dispatcher;
 use \stdClass;
 use \ArrayAccess;
 
@@ -46,7 +49,7 @@ use \ArrayAccess;
  * @license  http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link     http://www.nitronet.org/fwk
  */
-class Container implements ArrayAccess
+class Container extends Dispatcher implements ArrayAccess
 {
     /**
      * The objects store
@@ -133,9 +136,23 @@ class Container implements ArrayAccess
         ) {
             return $data['__fwk_di_shared_inst'];
         }
-        
+
         $definition = $this->store[$name];
-         
+        $event      = new BeforeServiceLoadedEvent($this, $name, $definition);
+
+        $this->notify($event);
+
+        // the event is stopped
+        if ($event->isStopped()) {
+            $return = $event->getReturnValue();
+
+            if ($data['__fwk_di_shared'] === true) {
+                $this->storeData[$name]['__fwk_di_shared_inst'] = $return;
+            }
+
+            return $return;
+        }
+
         if ($definition instanceof Invokable) {
             $return = $definition->invoke($this, $name);
         } elseif (is_callable($definition)) {
@@ -147,7 +164,9 @@ class Container implements ArrayAccess
         if ($data['__fwk_di_shared'] === true) {
             $this->storeData[$name]['__fwk_di_shared_inst'] = $return;
         }
-        
+
+        $this->notify(new AfterServiceLoadedEvent($this, $name, $definition, $return));
+
         return $return;
     }
     
