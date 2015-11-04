@@ -33,6 +33,7 @@
 namespace Fwk\Di\Exceptions;
 
 use Fwk\Di\Exception;
+use Interop\Container\Exception\NotFoundException;
 
 /**
  * DefinitionNotFound
@@ -43,7 +44,7 @@ use Fwk\Di\Exception;
  * @license  http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link     http://www.nitronet.org/fwk
  */
-class DefinitionNotFound extends Exception
+class DefinitionNotFound extends Exception implements NotFoundException
 {
     /**
      * Constructor

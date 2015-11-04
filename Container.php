@@ -36,6 +36,8 @@ use Fwk\Di\Events\AfterServiceLoadedEvent;
 use Fwk\Di\Events\BeforeServiceLoadedEvent;
 use Fwk\Events\Dispatcher;
 use \ArrayAccess;
+use Interop\Container\ContainerInterface;
+use \SplObjectStorage;
 
 /**
  * Container
@@ -48,7 +50,7 @@ use \ArrayAccess;
  * @license  http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link     http://www.nitronet.org/fwk
  */
-class Container extends Dispatcher implements ArrayAccess
+class Container extends Dispatcher implements ArrayAccess, ContainerInterface
 {
     /**
      * The objects store
@@ -73,6 +75,12 @@ class Container extends Dispatcher implements ArrayAccess
      * @var array
      */
     protected $propertiesMap = array();
+
+    /**
+     * Delegates Containers
+     * @var SplObjectStorage
+     */
+    protected $delegates;
     
     /**
      * Constructor
@@ -82,6 +90,7 @@ class Container extends Dispatcher implements ArrayAccess
     public function __construct()
     {
         $this->set('self', $this, true);
+        $this->delegates = new SplObjectStorage();
     }
     
     /**
@@ -124,8 +133,8 @@ class Container extends Dispatcher implements ArrayAccess
             $name = $name->getName();
         }
         
-        if (!$this->exists($name)) {
-            throw new Exceptions\DefinitionNotFound($name);
+        if (!$this->has($name)) {
+            return $this->getFromDelegate($name);
         }
         
         $data       =& $this->storeData[$name];
@@ -281,10 +290,10 @@ class Container extends Dispatcher implements ArrayAccess
      */
     public function unregister($name)
     {
-        if (!$this->exists($name)) {
+        if (!$this->has($name)) {
             throw new Exceptions\DefinitionNotFound($name);
         }
-        
+
         unset($this->storeData[$name]);
         unset($this->store[$name]);
         
@@ -301,7 +310,7 @@ class Container extends Dispatcher implements ArrayAccess
      */
     public function isShared($name)
     {
-        if (!$this->exists($name)) {
+        if (!$this->has($name)) {
             throw new Exceptions\DefinitionNotFound($name);
         }
         
@@ -317,7 +326,7 @@ class Container extends Dispatcher implements ArrayAccess
      * 
      * @return boolean
      */
-    public function exists($name)
+    public function has($name)
     {
         return array_key_exists($name, $this->store);
     }
@@ -331,7 +340,7 @@ class Container extends Dispatcher implements ArrayAccess
      */
     public function offsetExists($offset)
     {
-        return $this->exists($offset);
+        return $this->has($offset);
     }
     
     /**
@@ -369,5 +378,62 @@ class Container extends Dispatcher implements ArrayAccess
     public function offsetUnset($offset)
     {
         return $this->unregister($offset);
+    }
+
+    /**
+     * Adds a delegate/backup Container.
+     *
+     * @param ContainerInterface $container
+     *
+     * @return ContainerInterface
+     */
+    public function delegate(ContainerInterface $container)
+    {
+        if ($this->delegates->contains($container)) {
+            return $this;
+        }
+
+        $this->delegates->attach($container);
+
+        return $this;
+    }
+
+    /**
+     * Tells if a service is in a delegated Container
+     *
+     * @param string $name
+     *
+     * @return boolean
+     */
+    public function hasInDelegate($name)
+    {
+        foreach ($this->delegates as $container) {
+            /** @var ContainerInterface $container */
+            if ($container->has($name)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Loads a definition from the first delegated Container having in (FIFO)
+     *
+     * @param string $name Service identifier
+     *
+     * @throws Exceptions\DefinitionNotFound when the service is not found
+     * @return mixed
+     */
+    public function getFromDelegate($name)
+    {
+        foreach ($this->delegates as $container) {
+            /** @var ContainerInterface $container */
+            if ($container->has($name)) {
+                return $container->get($name);
+            }
+        }
+
+        throw new Exceptions\DefinitionNotFound($name);
     }
 }

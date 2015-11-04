@@ -26,7 +26,7 @@ class ContainerBuilderTest extends \PHPUnit_Framework_TestCase {
     public function testClassDefinition() {
         $container = $this->object->execute(__DIR__ .'/../test-di.xml');
         $this->assertInstanceOf('Fwk\Di\Container', $container);
-        $this->assertTrue($container->exists('myObj'));
+        $this->assertTrue($container->has('myObj'));
         $this->assertInstanceOf('Fwk\Di\ClassDefinition', $container->get('myObj'));
         $this->assertEquals($container->get('myObj'), $container->get('myObj'));
         $this->assertTrue($container->isShared('myObj'));
@@ -34,9 +34,9 @@ class ContainerBuilderTest extends \PHPUnit_Framework_TestCase {
     
     public function testDefinition() {
         $container = new \Fwk\Di\Container();
-        $this->assertFalse($container->exists('testDef'));
+        $this->assertFalse($container->has('testDef'));
         $this->object->execute(__DIR__ .'/../test-di.xml', $container);
-        $this->assertTrue($container->exists('testDef'));
+        $this->assertTrue($container->has('testDef'));
         $this->assertEquals('valueOfDefinition', $container->get('testDef'));
         $this->assertFalse($container->isShared('testDef'));
     }

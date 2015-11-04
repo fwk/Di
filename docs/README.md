@@ -54,7 +54,7 @@ class Database
 Without DI we would normally have instanciated this class on startup to make it available for our Controllers. 
 
 ``` php
-$db = new MyApp\Database('mysql:dbname=testdb;host=127.0.0.1', array('charset' => 'utf8'));
+$db = new MyApp\Db\Database('mysql:dbname=testdb;host=127.0.0.1', array('charset' => 'utf8'));
 ```
 This approach is fine because it works like it should. However the object is instantiated even when not needed, which can lead to memory problems when a lot of dependencies are needed.
 
@@ -62,7 +62,7 @@ This is where Dependency Injection comes in! With the help of Definitions, the  
 
 ``` php
 $container->set('db', function($container) {  
-    return new MyApp\Database('mysql:dbname=testdb;host=127.0.0.1', array('charset' => 'utf8'));
+    return new MyApp\Db\Database('mysql:dbname=testdb;host=127.0.0.1', array('charset' => 'utf8'));
 });
 ```
 Now that the Definition of the Database object is registered, the Container will instantiate the object when needed:
@@ -75,8 +75,7 @@ Huge isn't it? :)
 
 Of course, this is a really simple exemple of what can be done with Fwk\Di.
 
-* [Exemple usage of the Container](./exemple.md)
-* [Different kinds of Definitions](./definitions.md)
-* [Properties and References](./properties-references.md)
-* [Write Definitions using XML](./container-builder.md)
+* [Exemples usages](./exemples.md)
+* [Definitions Types](./definitions.md)
+* [Write Definitions using XML](./xml-container-builder.md)
 * [Extend functionalities with Listeners](./extend.md)

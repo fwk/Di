@@ -235,7 +235,7 @@ class ContainerBuilder
                 continue;
             }
 
-            if (!$container->exists($service)) {
+            if (!$container->has($service)) {
                 throw new Exception(sprintf('Invalid Xml Listener service ID: "%s"', $service));
             }
             $container->addListener($container->get($service));

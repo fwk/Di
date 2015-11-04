@@ -33,6 +33,7 @@
 namespace Fwk\Di;
 
 use \Exception as ExceptionBase;
+use Interop\Container\Exception\ContainerException;
 
 /**
  * Base exception class for Fwk\Di
@@ -43,6 +44,6 @@ use \Exception as ExceptionBase;
  * @license  http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link     http://fwk.pw
  */
-class Exception extends ExceptionBase
+class Exception extends ExceptionBase implements ContainerException
 {
 }

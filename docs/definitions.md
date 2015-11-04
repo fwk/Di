@@ -1,20 +1,59 @@
-# Definitions Types
+# Definitons 
 
-Definitions make
+Definitions describe the way a Dependency should be created.
 
-### Class
+| Name                | Type     | Class name                 | Description                  
+|:--------------------|:--------:|:---------------------------|:-------------------------------------|
+| ArrayDefinition     | array    | Fwk\Di\ArrayDefinition     | Describes a PHP array                |
+| ClassDefinition     | object   | Fwk\Di\ClassDefinition     | Describes a PHP object instantiation |
+| CallableDefinition  | callable | Fwk\Di\CallableDefinition  | Describes a PHP callable             |
+| LazyClassDefinition | object   | Fwk\Di\LazyClassDefinition | Describes a PHP Proxy object         |
 
-This type of Definition describe the way an object should be instantiated. 
+## ArrayDefinition
 
-### Array
+Describes a simple [PHP Array](http://php.net/array). This type of definition is generally used as a [Reference](./exemples.md#References) parameter. 
 
-This type of Definition describe an [PHP Array](http://php.net/manual/en/language.types.array.php).
+``` php
+$container->set('my-array', array(
+    'foo' => 'bar',
+    'db' => '@db'
+));
+```
+using XML:
+``` php
+<array-definition name="my-array">
+    <param key="foo">bar</param>
+    <param key="db">@db</param>
+</array-definition>
+```
 
-### Callable 
 
-This type of Definition describe any type of [PHP callback](http://php.net/manual/en/language.types.callable.php).
+## ClassDefinition
 
-### Scalar
+Describes the instantiation of a [PHP Object](http://php.net/object). This is the most common and useful definition.
 
-The Container can store any type of scalar value. 
+``` php
+use Fwk\Di\ClassDefinition;
 
+$container->set('db', ClassDefinition::factory(
+  'MyApp\Db\Connection', // full classname
+  array('@db.config') // constructor parameters
+)->addMethodCall('setCharset', array('utf8'))); // optional method call
+```
+
+## CallableDefinition
+
+Describes the call of a [PHP Callable](http://php.net/manual/en/language.types.callable.php). The callable is called each time you require the service (except if is [shared](./exemples.md#Shared-instances)). 
+
+``` php
+$container->set('std', function($container) {
+   return new \stdClass();
+});
+```
+
+## LazyClassDefinition
+
+Describes a [PHP Object](http://php.net/object). It simply call the function each time you require the service (except if [shared](./exemples.md#Shared-instances))
+
+
+Describes a simple [PHP Object](http://php.net/object). This is the main type of definition as it is the one that actually construct your objects. 

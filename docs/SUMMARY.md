@@ -1,6 +1,5 @@
-* [Index](./README.md)
+* [Introduction](./README.md)
 * [Exemples](./exemples.md)
 * [Definitions](./definitions.md)
-* [Properties and References](./properties-references.md)
-* [Container Builder](./container-builder.md)
+* [XML Container Builder](./xml-container-builder.md)
 * [Events Listeners](./extend.md)
