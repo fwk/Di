@@ -2,7 +2,7 @@
 /**
  * Fwk
  *
- * Copyright (c) 2011-2015, Julien Ballestracci <julien@nitronet.org>.
+ * Copyright (c) 2011-2012, Julien Ballestracci <julien@nitronet.org>.
  * All rights reserved.
  *
  * For the full copyright and license information, please view the LICENSE
@@ -23,37 +23,39 @@
  *
  * PHP Version 5.3
  *
- * @category  Dependency Injection
+ * @category  DependencyInjection
  * @package   Fwk\Di
  * @author    Julien Ballestracci <julien@nitronet.org>
- * @copyright 2011-2015 Julien Ballestracci <julien@nitronet.org>
+ * @copyright 2011-2014 Julien Ballestracci <julien@nitronet.org>
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @link      http://fwk.io
+ * @link      http://www.nitronet.org/fwk
  */
-namespace Fwk\Di;
+namespace Fwk\Di\Exceptions;
+
+use Fwk\Di\Exception;
+use Interop\Container\Exception\NotFoundException;
 
 /**
- * @category Interfaces
+ * DefinitionNotFoundException
+ * 
+ * @category Exceptions
  * @package  Fwk\Di
  * @author   Julien Ballestracci <julien@nitronet.org>
  * @license  http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @link     http://fwk.io/di
+ * @link     http://www.nitronet.org/fwk
  */
-interface ContainerAware
+class DefinitionNotFoundException extends Exception implements NotFoundException
 {
     /**
-     * Set the Container
-     *
-     * @param Container $container Dependency Injection Container
-     *
+     * Constructor
+     * 
+     * @param string          $name Definition name
+     * @param null|\Exception $prev Previous Exception
+     * 
      * @return void
      */
-    public function setContainer(Container $container);
-
-    /**
-     * Returns the Dependency injection Container
-     *
-     * @return Container
-     */
-    public function getContainer();
+    public function __construct($name, \Exception $prev = null)
+    {
+        parent::__construct("Definition '$name' is not registered", null, $prev);
+    }
 }

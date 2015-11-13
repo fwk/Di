@@ -32,8 +32,8 @@
  */
 namespace Fwk\Di;
 
-use Fwk\Di\Exceptions\DefinitionNotFound;
-use Fwk\Di\Exceptions\InvalidReference;
+use Fwk\Di\Exceptions\DefinitionNotFoundException;
+use Fwk\Di\Exceptions\InvalidReferenceException;
 
 /**
  * Reference
@@ -46,7 +46,7 @@ use Fwk\Di\Exceptions\InvalidReference;
  * @license  http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link     http://www.nitronet.org/fwk
  */
-class Reference implements Invokable
+class Reference implements InvokableInterface
 {
     /**
      * Container's reference name
@@ -104,8 +104,8 @@ class Reference implements Invokable
         
         try {
             $return = $container->get($this->name);
-        } catch(DefinitionNotFound $exp) {
-            throw new InvalidReference($this->name, $name, $exp);
+        } catch(DefinitionNotFoundException $exp) {
+            throw new InvalidReferenceException($this->name, $name, $exp);
         }
         
         return $return;

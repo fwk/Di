@@ -51,12 +51,12 @@ class ContainerTest extends \PHPUnit_Framework_TestCase {
     }
     
     public function testInvalidDefinition() {
-        $this->setExpectedException('Fwk\Di\Exceptions\DefinitionNotFound');
+        $this->setExpectedException('Fwk\Di\Exceptions\DefinitionNotFoundException');
         $inst = $this->object->get('test');
     }
     
     public function testInvalidSharedDefinition() {
-        $this->setExpectedException('Fwk\Di\Exceptions\DefinitionNotFound');
+        $this->setExpectedException('Fwk\Di\Exceptions\DefinitionNotFoundException');
         $inst = $this->object->isShared('test');
     }
     
@@ -86,7 +86,7 @@ class ContainerTest extends \PHPUnit_Framework_TestCase {
     }
     
     public function testUnregisterInvalidSharedDefinition() {
-        $this->setExpectedException('Fwk\Di\Exceptions\DefinitionNotFound');
+        $this->setExpectedException('Fwk\Di\Exceptions\DefinitionNotFoundException');
         $inst = $this->object->unregister('test');
     }
     

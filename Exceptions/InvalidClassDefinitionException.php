@@ -33,10 +33,9 @@
 namespace Fwk\Di\Exceptions;
 
 use Fwk\Di\Exception;
-use Interop\Container\Exception\NotFoundException;
 
 /**
- * DefinitionNotFound
+ * InvalidClassDefinitionException
  * 
  * @category Exceptions
  * @package  Fwk\Di
@@ -44,18 +43,24 @@ use Interop\Container\Exception\NotFoundException;
  * @license  http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link     http://www.nitronet.org/fwk
  */
-class DefinitionNotFound extends Exception implements NotFoundException
+class InvalidClassDefinitionException extends Exception
 {
     /**
      * Constructor
      * 
-     * @param string          $name Definition name
-     * @param null|\Exception $prev Previous Exception
+     * @param string          $name       Classname of the Definition
+     * @param null|string     $definition Name of the current definition (if any)
+     * @param null|\Exception $prev       Previous Exception
      * 
      * @return void
      */
-    public function __construct($name, \Exception $prev = null)
-    {
-        parent::__construct("Definition '$name' is not registered", null, $prev);
+    public function __construct($name, $definition = null, 
+        \Exception $prev = null
+    ) {
+        parent::__construct(
+            "[$definition] Class definition '$name' is invalid", 
+            null, 
+            $prev
+        );
     }
 }

@@ -34,7 +34,7 @@ namespace Fwk\Di\Xml;
 
 use Fwk\Di\ClassDefinition;
 use Fwk\Di\Exception;
-use Fwk\Di\Exceptions\InvalidArgument;
+use Fwk\Di\Exceptions\InvalidArgumentException;
 use Fwk\Xml\Map;
 use Fwk\Di\Container;
 use Fwk\Xml\XmlFile;

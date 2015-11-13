@@ -30,37 +30,28 @@
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link      http://www.nitronet.org/fwk
  */
-namespace Fwk\Di\Exceptions;
-
-use Fwk\Di\Exception;
+namespace Fwk\Di;
 
 /**
- * InvalidReference
+ * InvokableInterface
  * 
- * @category Exceptions
+ * Represents a property requiring to be Invoked by the Di Container.
+ *
+ * @category Interfaces
  * @package  Fwk\Di
  * @author   Julien Ballestracci <julien@nitronet.org>
  * @license  http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link     http://www.nitronet.org/fwk
  */
-class InvalidReference extends Exception
+interface InvokableInterface
 {
     /**
-     * Constructor
+     * Invoke and return the result.
+     *
+     * @param Container   $container The Di Container
+     * @param null|string $name      Name of the current definition (if any)
      * 
-     * @param string          $name       Reference name
-     * @param null|string     $definition Name of the current definition (if any)
-     * @param null|\Exception $prev       Previous Exception
-     * 
-     * @return void
+     * @return mixed
      */
-    public function __construct($name, $definition = null,
-        \Exception $prev = null
-    ) {
-        parent::__construct(
-            "[$definition] Reference '$name' does not exist", 
-            null, 
-            $prev
-        );
-    }
+    public function invoke(Container $container, $name = null);
 }

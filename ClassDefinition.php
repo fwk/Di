@@ -32,7 +32,7 @@
  */
 namespace Fwk\Di;
 
-use Fwk\Di\Exceptions\InvalidClassDefinition;
+use Fwk\Di\Exceptions\InvalidClassDefinitionException;
 
 /**
  * ClassDefinition
@@ -45,7 +45,7 @@ use Fwk\Di\Exceptions\InvalidClassDefinition;
  * @license  http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link     http://www.nitronet.org/fwk
  */
-class ClassDefinition extends AbstractDefinition implements Invokable
+class ClassDefinition extends AbstractDefinition implements InvokableInterface
 {
     /**
      * Name of the class to be instanciated
@@ -80,20 +80,20 @@ class ClassDefinition extends AbstractDefinition implements Invokable
      * @param null|string $name      Name of the current definition (if any)
      * 
      * @return object
-     * @throws Exceptions\InvalidClassDefinition
+     * @throws Exceptions\InvalidClassDefinitionException
      */
     public function invoke(Container $container, $name = null)
     {
-        if ($this->className instanceof Invokable) {
+        if ($this->className instanceof InvokableInterface) {
             try {
                 $this->className = $this->className->invoke($container, $name);
             } catch(Exception $exp) {
-                throw new InvalidClassDefinition($this->className, $name, $exp);
+                throw new InvalidClassDefinitionException($this->className, $name, $exp);
             }
         } 
         
         if (!is_string($this->className)) {
-            throw new InvalidClassDefinition(
+            throw new InvalidClassDefinitionException(
                 '???', 
                 new \InvalidArgumentException(
                     sprintf(
@@ -121,7 +121,7 @@ class ClassDefinition extends AbstractDefinition implements Invokable
      * @param null|string $definition Name of the current definition
      * 
      * @return void
-     * @throws Exceptions\InvalidClassDefinition
+     * @throws Exceptions\InvalidClassDefinitionException
      */
     protected function executeMethodCalls($instance, Container $container, 
         $definition = null
@@ -148,8 +148,8 @@ class ClassDefinition extends AbstractDefinition implements Invokable
      * @param null|string $definition Name of the current definition (if any)
      * 
      * @return object
-     * @throws Exceptions\ClassNotFound
-     * @throws Exceptions\InvalidClassDefinition
+     * @throws Exceptions\ClassNotFoundException
+     * @throws Exceptions\InvalidClassDefinitionException
      */
     protected function newInstance(Container $container, $definition = null)
     {
@@ -158,7 +158,7 @@ class ClassDefinition extends AbstractDefinition implements Invokable
         }
         
         if (!class_exists($this->className, true)) {
-            throw new Exceptions\ClassNotFound($this->className);
+            throw new Exceptions\ClassNotFoundException($this->className);
         }
         
         $reflect    = new \ReflectionClass($this->className);
@@ -167,7 +167,7 @@ class ClassDefinition extends AbstractDefinition implements Invokable
             try {
                 $args = $this->getConstructorArguments($container, $definition);
             } catch(Exception $exp) {
-                throw new InvalidClassDefinition(
+                throw new InvalidClassDefinitionException(
                     $this->className, 
                     $definition, 
                     $exp

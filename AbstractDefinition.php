@@ -75,7 +75,7 @@ abstract class AbstractDefinition
      * 
      * For a ClassDefinition these arguments are passed to the constructor.
      * 
-     * @param string|Invokable $argument The Argument
+     * @param string|InvokableInterface $argument The Argument
      * 
      * @return Definition 
      */
@@ -119,7 +119,7 @@ abstract class AbstractDefinition
     }
     
     /**
-     * Transform arguments to their real value if they are instance of Invokable
+     * Transform arguments to their real value if they are instance of InvokableInterface
      * or a @reference.
      * 
      * @param array<mixed> $args       List of arguments
@@ -127,7 +127,7 @@ abstract class AbstractDefinition
      * @param null|string  $definition Name of the current definition (if any)
      * 
      * @return array<mixed>
-     * @throws Exceptions\InvalidArgument
+     * @throws Exceptions\InvalidArgumentException
      */
     protected function propertizeArguments(array $args, Container $container,
         $definition = null
@@ -146,12 +146,12 @@ abstract class AbstractDefinition
             }
             
             try {
-                $return[$idx] = (($arg instanceof Invokable) 
+                $return[$idx] = (($arg instanceof InvokableInterface)
                     ? $arg->invoke($container, $definition) 
                     : $arg
                 );
             } catch(\Fwk\Di\Exception $exp) {
-                throw new Exceptions\InvalidArgument($idx, $definition, $exp);
+                throw new Exceptions\InvalidArgumentException($idx, $definition, $exp);
             }
         }
         

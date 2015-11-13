@@ -59,7 +59,7 @@ class LazyClassDefinition extends ClassDefinition
      * @param null|string $name      Name of the current definition (if any)
      * 
      * @return VirtualProxyInterface
-     * @throws Exceptions\InvalidClassDefinition
+     * @throws Exceptions\InvalidClassDefinitionException
      */
     public function invoke(Container $container, $name = null)
     {

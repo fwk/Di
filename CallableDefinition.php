@@ -32,7 +32,7 @@
  */
 namespace Fwk\Di;
 
-use Fwk\Di\Exceptions\InvalidCallableDefinition;
+use Fwk\Di\Exceptions\InvalidCallableDefinitionException;
 
 /**
  * CallableDefinition
@@ -46,7 +46,7 @@ use Fwk\Di\Exceptions\InvalidCallableDefinition;
  * @license  http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link     http://www.nitronet.org/fwk
  */
-class CallableDefinition extends AbstractDefinition implements Invokable
+class CallableDefinition extends AbstractDefinition implements InvokableInterface
 {
     /**
      * The callable function
@@ -75,19 +75,19 @@ class CallableDefinition extends AbstractDefinition implements Invokable
      * @param null|string $name      Name of the definition (if any)
      * 
      * @return mixed
-     * @throws Exceptions\InvalidCallableDefinition
+     * @throws Exceptions\InvalidCallableDefinitionException
      */
     public function invoke(Container $container, $name = null)
     {
         if (!is_callable($this->callable)) {
-            throw new InvalidCallableDefinition($this->callable, $name);
+            throw new InvalidCallableDefinitionException($this->callable, $name);
         }
         
         $args = array();
         try {
             $args = $this->getConstructorArguments($container, $name);
         } catch(Exception $exp) {
-            throw new InvalidCallableDefinition($this->callable, $name, $exp);
+            throw new InvalidCallableDefinitionException($this->callable, $name, $exp);
         }
         
         return call_user_func_array($this->callable, $args);

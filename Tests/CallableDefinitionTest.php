@@ -43,7 +43,7 @@ class CallableDefinitionTest extends \PHPUnit_Framework_TestCase {
     {
         \PHPUnit_Framework_Error_Notice::$enabled = FALSE;
         $this->object->setCallable(array('SimplyNot', 'callable'));
-        $this->setExpectedException('\Fwk\Di\Exceptions\InvalidCallableDefinition');
+        $this->setExpectedException('\Fwk\Di\Exceptions\InvalidCallableDefinitionException');
         $this->object->invoke($this->getContainer());
     }
     
@@ -52,7 +52,7 @@ class CallableDefinitionTest extends \PHPUnit_Framework_TestCase {
     public function testInvokeWithErroneousArguments() {
         $this->object->setCallable('date_default_timezone_set');
         $this->object->addArgument(new Reference('invalid_ref'));
-        $this->setExpectedException('Fwk\Di\Exceptions\InvalidCallableDefinition');
+        $this->setExpectedException('Fwk\Di\Exceptions\InvalidCallableDefinitionException');
         $it = $this->object->invoke($this->getContainer());
     }
 }

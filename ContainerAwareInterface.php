@@ -2,7 +2,7 @@
 /**
  * Fwk
  *
- * Copyright (c) 2011-2012, Julien Ballestracci <julien@nitronet.org>.
+ * Copyright (c) 2011-2015, Julien Ballestracci <julien@nitronet.org>.
  * All rights reserved.
  *
  * For the full copyright and license information, please view the LICENSE
@@ -23,44 +23,37 @@
  *
  * PHP Version 5.3
  *
- * @category  DependencyInjection
+ * @category  Dependency Injection
  * @package   Fwk\Di
  * @author    Julien Ballestracci <julien@nitronet.org>
- * @copyright 2011-2014 Julien Ballestracci <julien@nitronet.org>
+ * @copyright 2011-2015 Julien Ballestracci <julien@nitronet.org>
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @link      http://www.nitronet.org/fwk
+ * @link      http://fwk.io
  */
-namespace Fwk\Di\Exceptions;
-
-use Fwk\Di\Exception;
+namespace Fwk\Di;
 
 /**
- * InvalidClassDefinition
- * 
- * @category Exceptions
+ * @category Interfaces
  * @package  Fwk\Di
  * @author   Julien Ballestracci <julien@nitronet.org>
  * @license  http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @link     http://www.nitronet.org/fwk
+ * @link     http://fwk.io/di
  */
-class InvalidClassDefinition extends Exception
+interface ContainerAwareInterface
 {
     /**
-     * Constructor
-     * 
-     * @param string          $name       Classname of the Definition
-     * @param null|string     $definition Name of the current definition (if any)
-     * @param null|\Exception $prev       Previous Exception
-     * 
+     * Set the Container
+     *
+     * @param Container $container Dependency Injection Container
+     *
      * @return void
      */
-    public function __construct($name, $definition = null, 
-        \Exception $prev = null
-    ) {
-        parent::__construct(
-            "[$definition] Class definition '$name' is invalid", 
-            null, 
-            $prev
-        );
-    }
+    public function setContainer(Container $container);
+
+    /**
+     * Returns the Dependency injection Container
+     *
+     * @return Container
+     */
+    public function getContainer();
 }

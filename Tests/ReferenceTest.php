@@ -48,7 +48,7 @@ class ReferenceTest extends \PHPUnit_Framework_TestCase {
     
     public function testInvocationError()
     {
-        $this->setExpectedException('Fwk\Di\Exceptions\InvalidReference');
+        $this->setExpectedException('Fwk\Di\Exceptions\InvalidReferenceException');
         $this->object->invoke($this->getContainer());
     }
 }

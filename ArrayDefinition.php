@@ -43,7 +43,7 @@ namespace Fwk\Di;
  * @license  http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link     http://www.nitronet.org/fwk
  */
-class ArrayDefinition extends AbstractDefinition implements Invokable
+class ArrayDefinition extends AbstractDefinition implements InvokableInterface
 {
     /**
      * The array

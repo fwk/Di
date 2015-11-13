@@ -35,7 +35,7 @@ namespace Fwk\Di\Exceptions;
 use Fwk\Di\Exception;
 
 /**
- * ClassNotFound
+ * InvalidCallableDefinition
  * 
  * @category Exceptions
  * @package  Fwk\Di
@@ -43,18 +43,37 @@ use Fwk\Di\Exception;
  * @license  http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link     http://www.nitronet.org/fwk
  */
-class ClassNotFound extends Exception
+class InvalidCallableDefinitionException extends Exception
 {
     /**
      * Constructor
      * 
-     * @param string          $name Class name
-     * @param null|\Exception $prev Previous Exception
+     * @param mixed           $callable   Callable
+     * @param null|string     $definition Name of the current definition (if any)
+     * @param null|\Exception $prev       Previous Exception
      * 
      * @return void
      */
-    public function __construct($name, \Exception $prev = null)
-    {
-        parent::__construct("Class '$name' does not exists", null, $prev);
+    public function __construct($callable, $definition = null,
+        $prev = null
+    ) {
+        if (is_array($callable)) {
+            $class = (isset($callable[0]) ? $callable[0] : 'undefined');
+            $method = (isset($callable[1]) ?$callable[1] : 'undefined');
+            
+            $txt = sprintf(
+                "%s::%s()",
+                (is_object($class) ? get_class($class) : (string)$class),
+                (is_string($method) ? $method : print_r($method, true))
+            );
+        } else {
+            $txt = (string)$callable;
+        }
+        
+        parent::__construct(
+            "[$definition] Callable $txt is invalid", 
+            null, 
+            $prev
+        );
     }
 }

@@ -30,28 +30,37 @@
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link      http://www.nitronet.org/fwk
  */
-namespace Fwk\Di;
+namespace Fwk\Di\Exceptions;
+
+use Fwk\Di\Exception;
 
 /**
- * Invokable
+ * InvalidArgumentException
  * 
- * Represents a property requiring to be Invoked by the Di Container.
- *
- * @category Interfaces
+ * @category Exceptions
  * @package  Fwk\Di
  * @author   Julien Ballestracci <julien@nitronet.org>
  * @license  http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link     http://www.nitronet.org/fwk
  */
-interface Invokable
+class InvalidArgumentException extends Exception
 {
     /**
-     * Invoke and return the result.
-     *
-     * @param Container   $container The Di Container
-     * @param null|string $name      Name of the current definition (if any)
+     * Constructor
      * 
-     * @return mixed
+     * @param integer         $index      Idx of the Argument
+     * @param null|string     $definition Name of the current definition (if any)
+     * @param null|\Exception $prev       Previous Exception
+     * 
+     * @return void
      */
-    public function invoke(Container $container, $name = null);
+    public function __construct($index, $definition = null,
+        \Exception $prev = null
+    ) {
+        parent::__construct(
+            "[$definition] Argument #$index is invalid", 
+            null, 
+            $prev
+        );
+    }
 }

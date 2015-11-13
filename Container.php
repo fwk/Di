@@ -124,7 +124,7 @@ class Container extends Dispatcher implements ArrayAccess, ContainerInterface
      * 
      * @param string $name Identifier
      * 
-     * @throws Exceptions\DefinitionNotFound if $name isn't a valid identifier
+     * @throws Exceptions\DefinitionNotFoundException if $name isn't a valid identifier
      * @return mixed
      */
     public function get($name)
@@ -163,7 +163,7 @@ class Container extends Dispatcher implements ArrayAccess, ContainerInterface
 
         $this->storeData[$name] = $data = $event->getDefinitionData();
 
-        if ($definition instanceof Invokable) {
+        if ($definition instanceof InvokableInterface) {
             $return = $definition->invoke($this, $name);
         } elseif (is_callable($definition)) {
             $return = call_user_func_array($definition, array($this));
@@ -285,13 +285,13 @@ class Container extends Dispatcher implements ArrayAccess, ContainerInterface
      * 
      * @param string $name Identifier
      * 
-     * @throws Exceptions\DefinitionNotFound if $name isn't a valid identifier
+     * @throws Exceptions\DefinitionNotFoundException if $name isn't a valid identifier
      * @return boolean true on success
      */
     public function unregister($name)
     {
         if (!$this->has($name)) {
-            throw new Exceptions\DefinitionNotFound($name);
+            throw new Exceptions\DefinitionNotFoundException($name);
         }
 
         unset($this->storeData[$name]);
@@ -305,13 +305,13 @@ class Container extends Dispatcher implements ArrayAccess, ContainerInterface
      * 
      * @param string $name Identifier
      * 
-     * @throws Exceptions\DefinitionNotFound if $name isn't a valid identifier
+     * @throws Exceptions\DefinitionNotFoundException if $name isn't a valid identifier
      * @return boolean
      */
     public function isShared($name)
     {
         if (!$this->has($name)) {
-            throw new Exceptions\DefinitionNotFound($name);
+            throw new Exceptions\DefinitionNotFoundException($name);
         }
         
         $data = $this->storeData[$name];
@@ -422,7 +422,7 @@ class Container extends Dispatcher implements ArrayAccess, ContainerInterface
      *
      * @param string $name Service identifier
      *
-     * @throws Exceptions\DefinitionNotFound when the service is not found
+     * @throws Exceptions\DefinitionNotFoundException when the service is not found
      * @return mixed
      */
     public function getFromDelegate($name)
@@ -434,6 +434,6 @@ class Container extends Dispatcher implements ArrayAccess, ContainerInterface
             }
         }
 
-        throw new Exceptions\DefinitionNotFound($name);
+        throw new Exceptions\DefinitionNotFoundException($name);
     }
 }

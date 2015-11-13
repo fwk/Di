@@ -35,7 +35,7 @@ namespace Fwk\Di\Exceptions;
 use Fwk\Di\Exception;
 
 /**
- * InvalidArgument
+ * ClassNotFoundException
  * 
  * @category Exceptions
  * @package  Fwk\Di
@@ -43,24 +43,18 @@ use Fwk\Di\Exception;
  * @license  http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link     http://www.nitronet.org/fwk
  */
-class InvalidArgument extends Exception
+class ClassNotFoundException extends Exception
 {
     /**
      * Constructor
      * 
-     * @param integer         $index      Idx of the Argument
-     * @param null|string     $definition Name of the current definition (if any)
-     * @param null|\Exception $prev       Previous Exception
+     * @param string          $name Class name
+     * @param null|\Exception $prev Previous Exception
      * 
      * @return void
      */
-    public function __construct($index, $definition = null,
-        \Exception $prev = null
-    ) {
-        parent::__construct(
-            "[$definition] Argument #$index is invalid", 
-            null, 
-            $prev
-        );
+    public function __construct($name, \Exception $prev = null)
+    {
+        parent::__construct("Class '$name' does not exists", null, $prev);
     }
 }

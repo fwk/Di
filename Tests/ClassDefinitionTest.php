@@ -63,14 +63,14 @@ class ClassDefinitionTest extends \PHPUnit_Framework_TestCase {
     public function testStdClassInvalidReferenceInvocation()
     {
         $this->object = new ClassDefinition(new Reference('inexistant_ref'));
-        $this->setExpectedException('Fwk\Di\Exceptions\InvalidClassDefinition');
+        $this->setExpectedException('Fwk\Di\Exceptions\InvalidClassDefinitionException');
         $this->object->invoke($this->getContainer());
     }
     
     public function testInvalidArgumentInvocation()
     {
         $this->object = new ClassDefinition(new \stdClass());
-        $this->setExpectedException('Fwk\Di\Exceptions\InvalidClassDefinition');
+        $this->setExpectedException('Fwk\Di\Exceptions\InvalidClassDefinitionException');
         $this->object->invoke($this->getContainer());
     }
     
@@ -78,7 +78,7 @@ class ClassDefinitionTest extends \PHPUnit_Framework_TestCase {
      */
     public function testClassNotFound() {
         $this->object = new ClassDefinition('InexistantClassDi');
-        $this->setExpectedException('Fwk\Di\Exceptions\ClassNotFound');
+        $this->setExpectedException('Fwk\Di\Exceptions\ClassNotFoundException');
         $this->object->invoke($this->getContainer());
     }
     
@@ -96,7 +96,7 @@ class ClassDefinitionTest extends \PHPUnit_Framework_TestCase {
     public function testInvokeWithErroneousArguments() {
         $this->object = new ClassDefinition('DirectoryIterator');
         $this->object->addArgument(new Reference('invalid_ref'));
-        $this->setExpectedException('\Fwk\Di\Exceptions\InvalidClassDefinition');
+        $this->setExpectedException('\Fwk\Di\Exceptions\InvalidClassDefinitionException');
         $it = $this->object->invoke($this->getContainer());
     }
     
@@ -140,7 +140,7 @@ class ClassDefinitionTest extends \PHPUnit_Framework_TestCase {
         $this->object->addArgument('testRef');
         $this->object->addMethodCall('setName', array('@invalid_ref'));
         
-        $this->setExpectedException('\Fwk\Di\Exceptions\InvalidCallableDefinition');
+        $this->setExpectedException('\Fwk\Di\Exceptions\InvalidCallableDefinitionException');
         $this->object->invoke($this->getContainer());
     }
 }
