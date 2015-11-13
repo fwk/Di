@@ -2,7 +2,7 @@
     "name": "fwk/di",
     "description": "Dependency Injection Container for Happy Developers",
     "type": "library",
-    "keywords": ["dependency", "di", "dependency injection", "tools", "lib", "happydeveloper"],
+    "keywords": ["dependency", "di", "dependency injection", "tools", "lib", "happy-developer"],
     "license": "BSD",
     "authors": [
         {
@@ -12,13 +12,14 @@
     ],
     "minimum-stability": "dev",
     "require": {
-        "php": ">=5.3.3",
+        "php": ">=5.5",
         "fwk/xml": "dev-master",
         "fwk/events": "dev-master",
         "container-interop/container-interop": "1.*"
     },
     "require-dev": {
-        "ocramius/proxy-manager": "dev-master"
+        "zendframework/zend-stdlib": "dev-master",
+        "ocramius/proxy-manager": "1.0.*"
     },
     "suggest": {
         "ocramius/proxy-manager": "Allows usage of Lazy Services Loading (ProxyManager)"
