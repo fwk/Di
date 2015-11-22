@@ -6,3 +6,6 @@ vendor
 /app
 /composer.lock
 /build.xml
+/.idea/
+/phing-*
+/bin/

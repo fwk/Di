@@ -2,8 +2,8 @@
     "name": "fwk/di",
     "description": "Dependency Injection Container for Happy Developers",
     "type": "library",
-    "keywords": ["dependency", "di", "dependency injection", "tools", "lib", "happy-developer"],
-    "license": "BSD",
+    "keywords": ["dependency", "di", "dependency-injection", "container", "services", "happy-developer"],
+    "license": "BSD-3-Clause",
     "authors": [
         {
             "name": "Julien",
@@ -25,9 +25,13 @@
         "ocramius/proxy-manager": "Allows usage of Lazy Services Loading (ProxyManager)"
     },
     "autoload": {
-        "psr-0": {
-            "Fwk\\Di": ""
+        "psr-4": {
+            "Fwk\\Di\\": "src"
         }
     },
-    "target-dir": "Fwk/Di"
+    "autoload-dev": {
+        "classmap": [
+            "tests/"
+        ]
+    }
 }
