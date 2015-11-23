@@ -56,7 +56,7 @@ abstract class AbstractDefinition
      * @param array<mixed> $arguments List of arguments
      * 
      * @abstract
-     * @return void
+     * @return   void
      */
     abstract public function __construct($arg, array $arguments = array());
             

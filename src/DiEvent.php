@@ -46,18 +46,22 @@ class DiEvent extends Event
     /**
      * Constructor
      *
-     * @param string $name
-     * @param array $data
+     * @param string    $name
+     * @param array     $data
      * @param Container $container
      *
      * @return void
      */
     public function __construct($name, $data = array(), Container $container = null)
     {
-        parent::__construct($name, array_merge($data, array(
-            'container'       => $container,
-            'returnValue'     => null
-        )));
+        parent::__construct(
+            $name, array_merge(
+                $data, array(
+                'container'       => $container,
+                'returnValue'     => null
+                )
+            )
+        );
     }
 
     /**
