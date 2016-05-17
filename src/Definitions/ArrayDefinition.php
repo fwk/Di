@@ -30,15 +30,15 @@
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link      http://www.nitronet.org/fwk
  */
-namespace Fwk\Di;
+namespace Fwk\Di\Definitions;
 
-use Fwk\Di\Exceptions\InvalidCallableDefinitionException;
+use Fwk\Di\Container;
+use Fwk\Di\InvokableInterface;
 
 /**
- * CallableDefinition
+ * ArrayDefinition
  * 
- * Represents a Definition that require a function (callable) to be executed
- * to obtain its value.
+ * Represents a PHP Array definition
  *
  * @category Definition
  * @package  Fwk\Di
@@ -46,25 +46,25 @@ use Fwk\Di\Exceptions\InvalidCallableDefinitionException;
  * @license  http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link     http://www.nitronet.org/fwk
  */
-class CallableDefinition extends AbstractDefinition implements InvokableInterface
+class ArrayDefinition extends AbstractDefinition implements InvokableInterface
 {
     /**
-     * The callable function
-     * @var callable
+     * The array
+     * @var array
      */
-    protected $callable;
+    protected $array;
     
     /**
      * Constructor
      * 
-     * @param callable     $callable  The function to be called
+     * @param array<mixed> $array     The PHP array
      * @param array<mixed> $arguments List of arguments
      * 
      * @return void
      */
-    public function __construct($callable, array $arguments = array())
+    public function __construct($array, array $arguments = array())
     {
-        $this->callable     = $callable;
+        $this->array        = $array;
         $this->arguments    = $arguments;
     }
     
@@ -74,44 +74,32 @@ class CallableDefinition extends AbstractDefinition implements InvokableInterfac
      * @param Container   $container The Di Container
      * @param null|string $name      Name of the definition (if any)
      * 
-     * @return mixed
-     * @throws Exceptions\InvalidCallableDefinitionException
+     * @return array<mixed>
      */
     public function invoke(Container $container, $name = null)
     {
-        if (!is_callable($this->callable)) {
-            throw new InvalidCallableDefinitionException($this->callable, $name);
-        }
-        
-        $args = array();
-        try {
-            $args = $this->getConstructorArguments($container, $name);
-        } catch(Exception $exp) {
-            throw new InvalidCallableDefinitionException($this->callable, $name, $exp);
-        }
-        
-        return call_user_func_array($this->callable, $args);
+        return $this->propertizeArguments($this->array, $container, $name);
     }
     
     /**
-     * Returns the callable function
+     * Returns the array
      * 
-     * @return callable
+     * @return array<mixed>
      */
-    public function getCallable()
+    public function getArray()
     {
-        return $this->callable;
+        return $this->array;
     }
     
     /**
-     * Defines the callable function
+     * Defines the array
      * 
-     * @param callable $callable The callable function
+     * @param array<mixed> $array The callable function
      * 
      * @return void
      */
-    public function setCallable($callable)
+    public function setArray(array $array)
     {
-        $this->callable = $callable;
+        $this->array = $array;
     }
 }

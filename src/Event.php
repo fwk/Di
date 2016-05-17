@@ -32,7 +32,7 @@
  */
 namespace Fwk\Di;
 
-use Fwk\Events\Event;
+use Fwk\Events\Event as BaseEvent;
 
 /**
  * @category Listeners
@@ -41,7 +41,7 @@ use Fwk\Events\Event;
  * @license  http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link     http://www.phpfwk.com
  */
-class DiEvent extends Event
+class Event extends BaseEvent
 {
     /**
      * Constructor

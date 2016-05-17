@@ -1,6 +1,7 @@
 <?php
 
 namespace Fwk\Di;
+use Fwk\Di\Definitions\ClassDefinition;
 
 /**
  */

@@ -4,7 +4,7 @@
     <listener class="Fwk\Di\Tests\Xml\TestXmlListenerOverride" />
     <listener service="listener.service" />
 
-    <class-definition name="myObj" class="Fwk\Di\ClassDefinition" shared="true">
+    <class-definition name="myObj" class="Fwk\Di\Definitions\ClassDefinition" shared="true">
         <argument>\stdClass</argument>
         <call method="addArgument">
             <argument>ArgOne</argument>

@@ -1,6 +1,7 @@
 <?php
 
 namespace Fwk\Di\Xml;
+use Fwk\Di\Definitions\ClassDefinition;
 use Fwk\Di\Events\AfterServiceLoadedEvent;
 
 /**
@@ -27,7 +28,7 @@ class ContainerBuilderTest extends \PHPUnit_Framework_TestCase {
         $container = $this->object->execute(__DIR__ .'/../test-di.xml');
         $this->assertInstanceOf('Fwk\Di\Container', $container);
         $this->assertTrue($container->has('myObj'));
-        $this->assertInstanceOf('Fwk\Di\ClassDefinition', $container->get('myObj'));
+        $this->assertInstanceOf(ClassDefinition::class, $container->get('myObj'));
         $this->assertEquals($container->get('myObj'), $container->get('myObj'));
         $this->assertTrue($container->isShared('myObj'));
     }

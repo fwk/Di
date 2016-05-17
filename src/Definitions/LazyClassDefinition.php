@@ -2,7 +2,7 @@
 /**
  * Fwk
  *
- * Copyright (c) 2011-2012, Julien Ballestracci <julien@nitronet.org>.
+ * Copyright (c) 2011-2015, Julien Ballestracci <julien@nitronet.org>.
  * All rights reserved.
  *
  * For the full copyright and license information, please view the LICENSE
@@ -26,16 +26,25 @@
  * @category  DependencyInjection
  * @package   Fwk\Di
  * @author    Julien Ballestracci <julien@nitronet.org>
- * @copyright 2011-2014 Julien Ballestracci <julien@nitronet.org>
+ * @copyright 2011-2015 Julien Ballestracci <julien@nitronet.org>
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link      http://www.nitronet.org/fwk
  */
-namespace Fwk\Di;
+namespace Fwk\Di\Definitions;
+
+use Fwk\Di\Container;
+use ProxyManager\Configuration;
+use ProxyManager\Factory\LazyLoadingValueHolderFactory;
+use ProxyManager\GeneratorStrategy\EvaluatingGeneratorStrategy;
+use ProxyManager\Proxy\LazyLoadingInterface;
+use ProxyManager\Proxy\VirtualProxyInterface;
+use Fwk\Di\Exceptions;
 
 /**
- * ArrayDefinition
+ * LazyClassDefinition
  * 
- * Represents a PHP Array definition
+ * Represents a Definition returning an Proxied instance of some class,
+ * using the Proxy Pattern / ProxyManager
  *
  * @category Definition
  * @package  Fwk\Di
@@ -43,60 +52,39 @@ namespace Fwk\Di;
  * @license  http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link     http://www.nitronet.org/fwk
  */
-class ArrayDefinition extends AbstractDefinition implements InvokableInterface
+class LazyClassDefinition extends ClassDefinition
 {
     /**
-     * The array
-     * @var array
-     */
-    protected $array;
-    
-    /**
-     * Constructor
-     * 
-     * @param array<mixed> $array     The PHP array
-     * @param array<mixed> $arguments List of arguments
-     * 
-     * @return void
-     */
-    public function __construct($array, array $arguments = array())
-    {
-        $this->array        = $array;
-        $this->arguments    = $arguments;
-    }
-    
-    /**
-     * Calls $this->callable and return its value
+     * Instanciates $this->className and return the instance.
      * 
      * @param Container   $container The Di Container
-     * @param null|string $name      Name of the definition (if any)
+     * @param null|string $name      Name of the current definition (if any)
      * 
-     * @return array<mixed>
+     * @return VirtualProxyInterface
+     * @throws Exceptions\InvalidClassDefinitionException
      */
     public function invoke(Container $container, $name = null)
     {
-        return $this->propertizeArguments($this->array, $container, $name);
+        $proxy = $this->getProxyFactory()->createProxy(
+            $container->propertizeString($this->className),
+            function (&$wrappedInstance, LazyLoadingInterface $proxy) use ($container, $name) {
+                $wrappedInstance = parent::invoke($container, $name);
+                $proxy->setProxyInitializer(null);
+                return true;
+            }
+        );
+
+        return $proxy;
     }
-    
+
     /**
-     * Returns the array
-     * 
-     * @return array<mixed>
+     * @return LazyLoadingValueHolderFactory
      */
-    public function getArray()
+    protected function getProxyFactory()
     {
-        return $this->array;
-    }
-    
-    /**
-     * Defines the array
-     * 
-     * @param array<mixed> $array The callable function
-     * 
-     * @return void
-     */
-    public function setArray(array $array)
-    {
-        $this->array = $array;
+        $config = new Configuration();
+        $config->setGeneratorStrategy(new EvaluatingGeneratorStrategy());
+
+        return new LazyLoadingValueHolderFactory($config);
     }
 }

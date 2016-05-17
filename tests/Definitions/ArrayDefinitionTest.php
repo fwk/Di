@@ -1,6 +1,7 @@
 <?php
 
-namespace Fwk\Di;
+namespace Fwk\Di\Definitions;
+use Fwk\Di\Container;
 
 /**
  * Test class for CallableDefinition.

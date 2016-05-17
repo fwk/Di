@@ -33,9 +33,9 @@
 namespace Fwk\Di\Events;
 
 use Fwk\Di\Container;
-use Fwk\Di\DiEvent;
+use Fwk\Di\Event;
 
-class AfterServiceLoadedEvent extends DiEvent
+class AfterServiceLoadedEvent extends Event
 {
     public function __construct(Container $container, $serviceName, &$definition, $definitionData, &$valueObject)
     {

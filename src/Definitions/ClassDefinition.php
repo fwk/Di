@@ -30,9 +30,13 @@
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link      http://www.nitronet.org/fwk
  */
-namespace Fwk\Di;
+namespace Fwk\Di\Definitions;
 
+use Fwk\Di\Container;
+use Fwk\Di\Exception;
 use Fwk\Di\Exceptions\InvalidClassDefinitionException;
+use Fwk\Di\InvokableInterface;
+use Fwk\Di\Exceptions;
 
 /**
  * ClassDefinition

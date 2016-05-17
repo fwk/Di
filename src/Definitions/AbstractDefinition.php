@@ -30,7 +30,12 @@
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link      http://www.nitronet.org/fwk
  */
-namespace Fwk\Di;
+namespace Fwk\Di\Definitions;
+
+use Fwk\Di\Container;
+use Fwk\Di\InvokableInterface;
+use Fwk\Di\Exceptions;
+use Fwk\Di\Reference;
 
 /**
  * Abstract Definition Utility
@@ -77,7 +82,7 @@ abstract class AbstractDefinition
      * 
      * @param string|InvokableInterface $argument The Argument
      * 
-     * @return Definition 
+     * @return self
      */
     public function addArgument($argument)
     {
@@ -91,7 +96,7 @@ abstract class AbstractDefinition
      * 
      * @param array<mixed> $arguments List of new arguments
      * 
-     * @return Definition
+     * @return self
      */
     public function addArguments(array $arguments)
     {
@@ -192,7 +197,7 @@ abstract class AbstractDefinition
      * @param mixed        $arg       Mixed argument
      * @param array<mixed> $arguments List of arguments
      * 
-     * @return Definition
+     * @return self
      * @static
      */
     public static function factory($arg, array $arguments = array())

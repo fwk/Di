@@ -32,13 +32,13 @@
  */
 namespace Fwk\Di\Xml;
 
-use Fwk\Di\ClassDefinition;
+use Fwk\Di\Definitions\ClassDefinition;
+use Fwk\Di\Definitions\LazyClassDefinition;
 use Fwk\Di\Exception;
-use Fwk\Di\Exceptions\InvalidArgumentException;
 use Fwk\Xml\Map;
 use Fwk\Di\Container;
 use Fwk\Xml\XmlFile;
-use Fwk\Di\ArrayDefinition;
+use Fwk\Di\Definitions\ArrayDefinition;
 
 /**
  * ContainerBuilder
@@ -166,7 +166,7 @@ class ContainerBuilder
         foreach ($classDefs as $name => $infos) {
             $shared = (bool)$this->transformValueType($infos['shared']);
             $lazy = (bool)$this->transformValueType($infos['lazy']);
-            $defClass = ($lazy ? 'Fwk\Di\LazyClassDefinition' : 'Fwk\Di\ClassDefinition');
+            $defClass = ($lazy ? LazyClassDefinition::class : ClassDefinition::class);
             $def = new $defClass(
                 $infos['className'], 
                 $infos['arguments']
