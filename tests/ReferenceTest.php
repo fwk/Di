@@ -21,7 +21,7 @@ class ReferenceTest extends \PHPUnit_Framework_TestCase {
         $container = new Container();
         $container->set('test.param', 'parameterValue');
         $container->set('callable', function($c) { return 'callValue'; });
-        $container->set('shared', function($c) { $a = new stdClass(); $a->mt = microtime(true); return $a; }, true);
+        $container->set('shared', function($c) { $a = new \stdClass(); $a->mt = microtime(true); return $a; }, true);
         
         return $container;
     }

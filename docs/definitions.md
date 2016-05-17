@@ -2,12 +2,12 @@
 
 Definitions describe the way a Dependency should be created.
 
-| Name                | Type     | Class name                 | Description                  
-|:--------------------|:--------:|:---------------------------|:-------------------------------------|
-| ArrayDefinition     | array    | Fwk\Di\ArrayDefinition     | Describes a PHP array                |
-| ClassDefinition     | object   | Fwk\Di\ClassDefinition     | Describes a PHP object instantiation |
-| CallableDefinition  | callable | Fwk\Di\CallableDefinition  | Describes a PHP callable             |
-| LazyClassDefinition | object   | Fwk\Di\LazyClassDefinition | Describes a PHP Proxy object         |
+| Name                | Type     | Class name                             | Description                          
+|:--------------------|:--------:|:---------------------------------------|:-------------------------------------|
+| ArrayDefinition     | array    | Fwk\Di\Definitions\ArrayDefinition     | Describes a PHP array                |
+| ClassDefinition     | object   | Fwk\Di\Definitions\ClassDefinition     | Describes a PHP object instantiation |
+| CallableDefinition  | callable | Fwk\Di\Definitions\CallableDefinition  | Describes a PHP callable             |
+| LazyClassDefinition | object   | Fwk\Di\Definitions\LazyClassDefinition | Describes a PHP Proxy object         |
 
 ## ArrayDefinition
 

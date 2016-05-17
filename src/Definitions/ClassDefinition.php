@@ -104,7 +104,7 @@ class ClassDefinition extends AbstractDefinition implements InvokableInterface
                         'Classname must be a string or a Fwk\Di\Reference ' .
                         'instance (' . (is_object($this->className) 
                             ? get_class($this->className) 
-                            : get_type($this->className)
+                            : gettype($this->className)
                         ) . ' given)'
                     )
                 )

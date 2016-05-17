@@ -33,7 +33,10 @@
 namespace Fwk\Di;
 
 use Fwk\Di\Events\AfterServiceLoadedEvent;
+use Fwk\Di\Events\AfterServiceRegisteredEvent;
 use Fwk\Di\Events\BeforeServiceLoadedEvent;
+use Fwk\Di\Events\BeforeServiceRegisteredEvent;
+use Fwk\Di\Exceptions\DefinitionNotFoundException;
 use Fwk\Events\Dispatcher;
 use \ArrayAccess;
 use Interop\Container\ContainerInterface;
@@ -106,15 +109,18 @@ class Container extends Dispatcher implements ArrayAccess, ContainerInterface
     public function set($name, $definition, $shared = false, 
         array $data = array()
     ) {
-        $data = array_merge(
-            array(
-                '__fwk_di_shared'   => $shared
-            ), 
-            $data
-        );
+        $event = new BeforeServiceRegisteredEvent($this, $name, $definition, $data);
+        $this->notify($event);
 
+        if ($event->isStopped()) {
+            return $this;
+        }
+
+        $data = array_merge(array('__fwk_di_shared'   => $shared), $data);
         $this->store[$name] = $definition;
         $this->storeData[$name] = $data;
+
+        $this->notify(new AfterServiceRegisteredEvent($this, $name, $definition, $data));
 
         return $this;
     }
@@ -138,7 +144,6 @@ class Container extends Dispatcher implements ArrayAccess, ContainerInterface
         }
         
         $data       =& $this->storeData[$name];
-
         if ($data['__fwk_di_shared'] === true
             && isset($data['__fwk_di_shared_inst'])
         ) {
@@ -181,6 +186,27 @@ class Container extends Dispatcher implements ArrayAccess, ContainerInterface
         $this->storeData[$name] = $afterEvent->getDefinitionData();
 
         return $return;
+    }
+
+    /**
+     * Returns data associated with the given definition (without internals).
+     *
+     * @param string $name Service name
+     *
+     * @throws DefinitionNotFoundException
+     */
+    public function getDefinitionData($name)
+    {
+        if (!$this->has($name)) {
+            throw new DefinitionNotFoundException($name);
+        }
+
+        $data = $this->storeData[$name];
+        $keys = array_filter(array_keys($data), function($key) {
+            return (strpos($key, '__fwk_di', 0) === false);
+        });
+
+        return array_intersect_key($data, array_flip($keys));
     }
     
     /**

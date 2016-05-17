@@ -47,7 +47,7 @@ class ContainerTest extends \PHPUnit_Framework_TestCase {
         $this->assertTrue($this->object->has('test'));
         $this->assertTrue($this->object->isShared('test'));
         $inst = $this->object->get('test');
-        $this->assertInstanceOf('\stdClass', $inst);
+        $this->assertInstanceOf('stdClass', $inst);
         $this->assertTrue($inst === $this->object->get('test'));
     }
     
@@ -120,5 +120,17 @@ class ContainerTest extends \PHPUnit_Framework_TestCase {
         $this->object->setProperty('testPhrase', ':testPropOne+:testPropOne=:testPropTwo');
 
         $this->assertEquals('one+one=two', $this->object->getProperty('testPhrase'));
+    }
+
+    public function testDefinitionData()
+    {
+        $this->object->set('testDef', 'definitionDataTest', false, array('one' => 1, 'two' => 2, 'three' => 3));
+
+        $data = $this->object->getDefinitionData('testDef');
+        $this->assertTrue(is_array($data));
+        $this->assertEquals(3, count($data));
+        foreach ($data as $k => $v) {
+            $this->assertFalse(strpos($k, '__fwk_di', 0));
+        }
     }
 }
