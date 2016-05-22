@@ -37,6 +37,7 @@ use Fwk\Di\Events\AfterServiceRegisteredEvent;
 use Fwk\Di\Events\BeforeServiceLoadedEvent;
 use Fwk\Di\Events\BeforeServiceRegisteredEvent;
 use Fwk\Di\Exceptions\DefinitionNotFoundException;
+use Fwk\Di\Exceptions\SearchException;
 use Fwk\Events\Dispatcher;
 use \ArrayAccess;
 use Interop\Container\ContainerInterface;
@@ -461,5 +462,65 @@ class Container extends Dispatcher implements ArrayAccess, ContainerInterface
         }
 
         throw new Exceptions\DefinitionNotFoundException($name);
+    }
+
+    /**
+     * @param array $query
+     *
+     * @return array
+     */
+    public function search(array $query)
+    {
+        $results = array();
+        $collection = $this->storeData;
+        $queryValuesCache = array();
+
+        foreach ($collection as $definition => $data) {
+            foreach ($query as $key => $queryValue) {
+                if (!array_key_exists($key, $data)) {
+                    continue;
+                }
+
+                if (!is_string($data[$key]) || !is_string($queryValue)) {
+                    if ($data[$key] === $queryValue) {
+                        $results[$definition] = $data;
+                    }
+                    continue;
+                }
+
+                if (!isset($queryValuesCache[$key])) {
+                    $queryValuesCache[$key] = $this->searchQueryToRegex($queryValue);
+                }
+
+                if (preg_match($queryValuesCache[$key], $data[$key])) {
+                    $results[$definition] = $data;
+                }
+            }
+        }
+
+        return $results;
+    }
+
+    /**
+     * Transforms a wildcard to a regex
+     *
+     * @param string $value
+     *
+     * @return string
+     * @throws SearchException
+     */
+    protected function searchQueryToRegex($value)
+    {
+        $original = $value;
+        $value = $this->propertizeString($value);
+        if (!is_string($value)) {
+            throw new SearchException("Invalid Query: '$original' because of a non-string value.");
+        }
+
+        if (empty($value)) {
+            return "/(.+){1,}/";
+        }
+
+        return '/^'. str_replace(array('?', '*'), array('(.+){1}', '(.+){1,}'), $value) .'$/';
     }
 }

@@ -133,4 +133,30 @@ class ContainerTest extends \PHPUnit_Framework_TestCase {
             $this->assertFalse(strpos($k, '__fwk_di', 0));
         }
     }
+
+    public function testServicesSearch()
+    {
+        $this->object->set('testDef', 'definitionDataTest', false, array('dataOne' => true, 'text' => 'hello John'));
+        $this->object->set('testDef2', 'definitionDataTest', false, array('dataOne' => false, 'text' => 'hello Doe'));
+        $this->object->set('testDef3', 'definitionDataTest', false, array('dataTwo' => false, 'text' => 'Hey guys!'));
+
+        $results = $this->object->search(array('dataOne' => true));
+        $this->assertEquals(1, count($results));
+        $this->assertArrayHasKey('testDef', $results);
+        $results = $this->object->search(array('dataOne' => false));
+        $this->assertEquals(1, count($results));
+        $this->assertArrayHasKey('testDef2', $results);
+
+        $results = $this->object->search(array('nothing'));
+        $this->assertEquals(0, count($results));
+
+        $results = $this->object->search(array('text' => 'hello*'));
+        $this->assertEquals(2, count($results));
+        $this->assertArrayHasKey('testDef', $results);
+        $this->assertArrayHasKey('testDef2', $results);
+
+        $results = $this->object->search(array('text' => '*guys?'));
+        $this->assertEquals(1, count($results));
+        $this->assertArrayHasKey('testDef3', $results);
+    }
 }

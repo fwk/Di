@@ -79,6 +79,10 @@ class ContainerXmlMap extends Map
                     ->loop(true)
                     ->value('value')
                 )
+            )->addChildren(
+                Path::factory('data/param', 'data', array())
+                    ->loop(true, '@key')
+                    ->value('value')
             )
         );
         
@@ -111,7 +115,12 @@ class ContainerXmlMap extends Map
                 ->loop(true)
                 ->attribute('key')
                 ->value('value')
-            )    
+            )
+            ->addChildren(
+                Path::factory('data/param', 'data', array())
+                    ->loop(true, '@key')
+                    ->value('value')
+            )
         );
 
         $this->add(

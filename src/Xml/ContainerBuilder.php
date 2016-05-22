@@ -178,7 +178,7 @@ class ContainerBuilder
                 );
             }
             
-            $container->set($name, $def, $shared);
+            $container->set($name, $def, $shared, $infos['data']);
         }
     }
     
@@ -207,7 +207,7 @@ class ContainerBuilder
                 }
             }
             
-            $container->set($name, new ArrayDefinition($array), $shared);
+            $container->set($name, new ArrayDefinition($array), $shared, $infos['data']);
         }
     }
 

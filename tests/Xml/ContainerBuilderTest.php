@@ -31,6 +31,7 @@ class ContainerBuilderTest extends \PHPUnit_Framework_TestCase {
         $this->assertInstanceOf(ClassDefinition::class, $container->get('myObj'));
         $this->assertEquals($container->get('myObj'), $container->get('myObj'));
         $this->assertTrue($container->isShared('myObj'));
+        $this->assertArrayHasKey('testData', $container->getDefinitionData('myObj'));
     }
     
     public function testDefinition() {

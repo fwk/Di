@@ -9,11 +9,17 @@
         <call method="addArgument">
             <argument>ArgOne</argument>
         </call>
+        <data>
+            <param key="testData">value</param>
+        </data>
     </class-definition> 
     <definition name="testDef">valueOfDefinition</definition>
     <array-definition name="arrayDef">
         <param key="debug">true</param>
         <param key="iniProp">:iniProp</param>
+        <data>
+            <param key="testData">value</param>
+        </data>
     </array-definition>
     <class-definition name="listener.service" class="Fwk\Di\Tests\Xml\TestXmlServiceListener" />
 </dependency-injection>
