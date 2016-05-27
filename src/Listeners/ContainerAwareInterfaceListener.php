@@ -34,7 +34,7 @@ namespace Fwk\Di;
 use Fwk\Di\Events\AfterServiceLoadedEvent;
 
 /**
- * This interface makes any ContainerAwareInterface object to have to Container defined
+ * This interface makes any ContainerAwareInterface object to have the Container defined
  * when loaded.
  *
  * @category Listeners

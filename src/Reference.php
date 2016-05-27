@@ -100,8 +100,6 @@ class Reference implements InvokableInterface
      */
     public function invoke(Container $container, $name = null)
     {
-        $return = false;
-        
         try {
             $return = $container->get($this->name);
         } catch(DefinitionNotFoundException $exp) {

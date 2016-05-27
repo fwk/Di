@@ -33,7 +33,7 @@ using XML:
 Describes the instantiation of a [PHP Object](http://php.net/object). This is the most common and useful definition.
 
 ``` php
-use Fwk\Di\ClassDefinition;
+use Fwk\Di\Definitions\ClassDefinition;
 
 $container->set('db', ClassDefinition::factory(
   'MyApp\Db\Connection', // full classname

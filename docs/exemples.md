@@ -42,9 +42,9 @@ $container->set('db', function(Container $container) {
 ```
 Note: A Closure Definition always takes the Container as argument.
 
-### Class Definition (```Fwk\Di\ClassDefinition```)
+### Class Definition (```Fwk\Di\Definitions\ClassDefinition```)
 ``` php
-$container->set('db', \Fwk\Di\ClassDefinition(
+$container->set('db', new ClassDefinition(
     'MyApp\Db\Database',
     array(
         'mysql:dbname=testdb;host=127.0.0.1',
@@ -64,7 +64,7 @@ $container->set('db', \Fwk\Di\ClassDefinition(
     <argument>@db.config</argument>
 </class-definition> 
 ```
-This exemple is a little more complex because we need to create an ```db.config``` definition (```Fwk\Di\ArrayDefinition```) that we use as our second constructor argument as a Reference (explained later bellow). [Learn more about XML definitions](./container-builder.md).
+This example is a little more complex because we need to create an ```db.config``` definition (```Fwk\Di\ArrayDefinition```) that we use as our second constructor argument as a Reference (explained later bellow). [Learn more about XML definitions](./container-builder.md).
 
 ## Usage 
 

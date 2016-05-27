@@ -8,11 +8,7 @@ $ curl -s http://getcomposer.org/installer | php
 
 Then require fwk/di as a dependency of your project in ```composer.json```:
 ``` javascript
-{
-    "require": {
-        "fwk/di": "dev-master",
-    }
-}
+php composer.phar require fwk/di
 ```
 
 and finally install it!
