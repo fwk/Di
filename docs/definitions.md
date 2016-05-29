@@ -8,6 +8,7 @@ Definitions describe the way a Dependency should be created.
 | ClassDefinition     | object   | Fwk\Di\Definitions\ClassDefinition     | Describes a PHP object instantiation |
 | CallableDefinition  | callable | Fwk\Di\Definitions\CallableDefinition  | Describes a PHP callable             |
 | LazyClassDefinition | object   | Fwk\Di\Definitions\LazyClassDefinition | Describes a PHP Proxy object         |
+| ScalarDefintiion    | any      | Fwk\Di\Definitions\ScalarDefinition    | Describes any other PHP value        |
 
 ## ArrayDefinition
 
@@ -20,7 +21,7 @@ $container->set('my-array', array(
 ));
 ```
 using XML:
-``` php
+``` xml
 <array-definition name="my-array">
     <param key="foo">bar</param>
     <param key="db">@db</param>
@@ -39,6 +40,17 @@ $container->set('db', ClassDefinition::factory(
   'MyApp\Db\Connection', // full classname
   array('@db.config') // constructor parameters
 )->addMethodCall('setCharset', array('utf8'))); // optional method call
+```
+or using XML:
+``` xml
+<array-definition name="db.config">
+    <param key="charset">utf8</param>
+</array-definition>
+
+<class-definition name="db" class="MyApp\Db\Database">
+    <argument>mysql:dbname=testdb;host=127.0.0.1</argument>
+    <argument>@db.config</argument>
+</class-definition> 
 ```
 
 ## CallableDefinition

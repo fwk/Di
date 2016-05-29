@@ -69,7 +69,6 @@ Now that the Definition of the Database object is registered, the Container will
 ``` php 
 $db = $container->get('db');
 ```
-Huge isn't it? :)
 
 ## Dig the documentation
 
@@ -78,4 +77,4 @@ Of course, this is a really simple exemple of what can be done with Fwk\Di.
 * [Exemples usages](./exemples.md)
 * [Definitions Types](./definitions.md)
 * [Write Definitions using XML](./xml-container-builder.md)
-* [Extend functionalities with Listeners](./extend.md)
+* [Extend functionalities with Listeners](./advanced-usages.md)

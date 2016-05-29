@@ -78,7 +78,9 @@ $db = $container->get('db');
 As it is described above you'll create a new instance of your object everytime you call ```$container->get('db')```. You can decide to share the same instance (like Singleton) when you create the definition:
 
 ``` php
-$container->set('db', $definition, $shared = true);
+$definition->setShared(true);
+
+$container->set('db', $definition);
 ```
 or
 ``` xml
