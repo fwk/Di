@@ -142,8 +142,50 @@ abstract class AbstractDefinition
      *
      * @return boolean
      */
-    public function match(array $query)
+    public function match(array $query, Container $container)
     {
+        $queryValuesCache = array();
+        foreach ($query as $key => $queryValue) {
+            if (!array_key_exists($key, $this->data)) {
+                continue;
+            }
 
+            if (!is_string($this->data[$key]) || !is_string($queryValue)) {
+                return $this->data[$key] === $queryValue;
+            }
+
+            if (!isset($queryValuesCache[$key])) {
+                $queryValuesCache[$key] = $this->searchQueryToRegex($queryValue, $container);
+            }
+
+            if (preg_match($queryValuesCache[$key], $this->data[$key])) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Transforms a wildcard to a regex
+     *
+     * @param string $value
+     *
+     * @return string
+     * @throws Exceptions\SearchException
+     */
+    protected function searchQueryToRegex($value, Container $container)
+    {
+        $original = $value;
+        $value = $container->propertizeString($value);
+        if (!is_string($value)) {
+            throw new Exceptions\SearchException("Invalid Query: '$original' because of a non-string value.");
+        }
+
+        if (empty($value)) {
+            return "/(.+){1,}/";
+        }
+
+        return '/^'. str_replace(array('?', '*'), array('(.+){1}', '(.+){1,}'), $value) .'$/';
     }
 }

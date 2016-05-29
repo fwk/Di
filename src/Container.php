@@ -32,6 +32,7 @@
  */
 namespace Fwk\Di;
 
+use Fwk\Di\Definitions\ArrayDefinition;
 use Fwk\Di\Definitions\CallableDefinition;
 use Fwk\Di\Definitions\ScalarDefinition;
 use Fwk\Di\Events\AfterServiceLoadedEvent;
@@ -113,6 +114,8 @@ class Container extends Dispatcher implements ArrayAccess, ContainerInterface
         if (!$definition instanceof DefinitionInterface) {
             if (is_callable($definition)) {
                 $definition = CallableDefinition::factory($definition);
+            } elseif (is_array($definition)) {
+                $definition = ArrayDefinition::factory($definition);
             } else {
                 $wasObj = is_object($definition);
                 $definition = ScalarDefinition::factory($definition);
@@ -461,62 +464,23 @@ class Container extends Dispatcher implements ArrayAccess, ContainerInterface
     }
 
     /**
-     * @param array $query
+     * Search definitions
      *
-     * @return array
+     * @param array $query Search query
+     *
+     * @return array<DefinitionInterface>
      */
     public function search(array $query)
     {
         $results = array();
-        $collection = $this->storeData;
-        $queryValuesCache = array();
-
-        foreach ($collection as $definition => $data) {
-            foreach ($query as $key => $queryValue) {
-                if (!array_key_exists($key, $data)) {
-                    continue;
-                }
-
-                if (!is_string($data[$key]) || !is_string($queryValue)) {
-                    if ($data[$key] === $queryValue) {
-                        $results[$definition] = $data;
-                    }
-                    continue;
-                }
-
-                if (!isset($queryValuesCache[$key])) {
-                    $queryValuesCache[$key] = $this->searchQueryToRegex($queryValue);
-                }
-
-                if (preg_match($queryValuesCache[$key], $data[$key])) {
-                    $results[$definition] = $data;
-                }
+        foreach ($this->store as $def) {
+            $name = $this->store->getInfo();
+            /** @var DefinitionInterface $def */
+            if ($def->match($query, $this)) {
+                $results[$name] = $def;
             }
         }
 
         return $results;
-    }
-
-    /**
-     * Transforms a wildcard to a regex
-     *
-     * @param string $value
-     *
-     * @return string
-     * @throws SearchException
-     */
-    protected function searchQueryToRegex($value)
-    {
-        $original = $value;
-        $value = $this->propertizeString($value);
-        if (!is_string($value)) {
-            throw new SearchException("Invalid Query: '$original' because of a non-string value.");
-        }
-
-        if (empty($value)) {
-            return "/(.+){1,}/";
-        }
-
-        return '/^'. str_replace(array('?', '*'), array('(.+){1}', '(.+){1,}'), $value) .'$/';
     }
 }

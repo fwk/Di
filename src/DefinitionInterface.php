@@ -104,5 +104,5 @@ interface DefinitionInterface extends InvokableInterface
      *
      * @return boolean
      */
-    public function match(array $query);
+    public function match(array $query, Container $container);
 }

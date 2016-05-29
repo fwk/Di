@@ -3,6 +3,7 @@
 namespace Fwk\Di;
 use Fwk\Di\Definitions\CallableDefinition;
 use Fwk\Di\Definitions\ClassDefinition;
+use Fwk\Di\Definitions\ScalarDefinition;
 
 /**
  */
@@ -113,11 +114,11 @@ class ContainerTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals('one+one=two', $this->object->getProperty('testPhrase'));
     }
 
-    public function __testServicesSearch()
+    public function testServicesSearch()
     {
-        $this->object->set('testDef', 'definitionDataTest', false, array('dataOne' => true, 'text' => 'hello John'));
-        $this->object->set('testDef2', 'definitionDataTest', false, array('dataOne' => false, 'text' => 'hello Doe'));
-        $this->object->set('testDef3', 'definitionDataTest', false, array('dataTwo' => false, 'text' => 'Hey guys!'));
+        $this->object->set('testDef', ScalarDefinition::factory('definitionDataTest')->setData(array('dataOne' => true, 'text' => 'hello John')));
+        $this->object->set('testDef2', ScalarDefinition::factory('definitionDataTest')->setData(array('dataOne' => false, 'text' => 'hello Doe')));
+        $this->object->set('testDef3', ScalarDefinition::factory('definitionDataTest')->setData(array('dataTwo' => false, 'text' => 'Hey guys!')));
 
         $results = $this->object->search(array('dataOne' => true));
         $this->assertEquals(1, count($results));
