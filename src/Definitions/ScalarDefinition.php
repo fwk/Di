@@ -2,7 +2,7 @@
 /**
  * Fwk
  *
- * Copyright (c) 2011-2012, Julien Ballestracci <julien@nitronet.org>.
+ * Copyright (c) 2011-2016, Julien Ballestracci <julien@nitronet.org>.
  * All rights reserved.
  *
  * For the full copyright and license information, please view the LICENSE
@@ -26,50 +26,44 @@
  * @category  DependencyInjection
  * @package   Fwk\Di
  * @author    Julien Ballestracci <julien@nitronet.org>
- * @copyright 2011-2014 Julien Ballestracci <julien@nitronet.org>
+ * @copyright 2011-2016 Julien Ballestracci <julien@nitronet.org>
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @link      http://www.nitronet.org/fwk
+ * @link      http://fwk.io/di
  */
 namespace Fwk\Di\Definitions;
 
 use Fwk\Di\Container;
 use Fwk\Di\DefinitionInterface;
-use Fwk\Di\Exception;
-use Fwk\Di\Exceptions\InvalidCallableDefinitionException;
-use Fwk\Di\Exceptions;
 
 /**
- * CallableDefinition
+ * ScalarDefinition
  * 
- * Represents a Definition that require a function (callable) to be executed
- * to obtain its value.
+ * Represents a scalar-typed definition: string, integer, boolean, float
  *
  * @category Definition
  * @package  Fwk\Di
  * @author   Julien Ballestracci <julien@nitronet.org>
  * @license  http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @link     http://www.nitronet.org/fwk
+ * @link     http://fwk.io/di
  */
-class CallableDefinition extends AbstractArgsDefinition implements DefinitionInterface
+class ScalarDefinition extends AbstractDefinition implements DefinitionInterface
 {
     /**
-     * The callable function
-     * @var callable
+     * The value
+     * @var mixed
      */
-    protected $callable;
+    protected $value;
     
     /**
      * Constructor
      * 
-     * @param callable     $callable  The function to be called
-     * @param array<mixed> $arguments List of arguments
-     * 
+     * @param mixed $value     The scalar value
+     *
      * @return void
      */
-    public function __construct($callable, array $arguments = array())
+    public function __construct($value)
     {
-        $this->callable     = $callable;
-        $this->arguments    = $arguments;
+        $this->value = $value;
     }
     
     /**
@@ -78,44 +72,44 @@ class CallableDefinition extends AbstractArgsDefinition implements DefinitionInt
      * @param Container   $container The Di Container
      * @param null|string $name      Name of the definition (if any)
      * 
-     * @return mixed
-     * @throws Exceptions\InvalidCallableDefinitionException
+     * @return array<mixed>
      */
     public function invoke(Container $container, $name = null)
     {
-        if (!is_callable($this->callable)) {
-            throw new InvalidCallableDefinitionException($this->callable, $name);
-        }
-        
-        $args = array();
-        try {
-            $args = $this->getConstructorArguments($container, $name);
-        } catch(Exception $exp) {
-            throw new InvalidCallableDefinitionException($this->callable, $name, $exp);
-        }
-        
-        return call_user_func_array($this->callable, $args);
+        return $this->value;
     }
     
     /**
-     * Returns the callable function
+     * Returns the value
      * 
-     * @return callable
+     * @return mixed
      */
-    public function getCallable()
+    public function getValue()
     {
-        return $this->callable;
+        return $this->value;
     }
     
     /**
-     * Defines the callable function
+     * Defines the array
      * 
-     * @param callable $callable The callable function
+     * @param mixed $value The scalar-typed value
      * 
      * @return void
      */
-    public function setCallable($callable)
+    public function setValue($value)
     {
-        $this->callable = $callable;
+        $this->value = $value;
+    }
+
+    /**
+     * Factory
+     *
+     * @param mixed $value The scalar-typed definition
+     *
+     * @return ScalarDefition
+     */
+    public static function factory($value)
+    {
+        return new static($value);
     }
 }

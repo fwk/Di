@@ -1,6 +1,7 @@
 <?php
 
 namespace Fwk\Di;
+use Fwk\Di\Definitions\CallableDefinition;
 use Fwk\Di\Definitions\ClassDefinition;
 
 /**
@@ -34,7 +35,6 @@ class ContainerTest extends \PHPUnit_Framework_TestCase {
         $callable = function () { $a = new \stdClass(); $a->mt = microtime(true); return $a; };
         $this->object->set('test', $callable);
         $this->assertTrue($this->object->has('test'));
-        $this->assertFalse($this->object->isShared('test'));
         $inst = $this->object->get('test');
         $this->assertInstanceOf('\stdClass', $inst);
         $this->assertFalse($inst === $this->object->get('test'));
@@ -43,9 +43,8 @@ class ContainerTest extends \PHPUnit_Framework_TestCase {
     public function testSharedSetAndGetCallable() {
         $this->assertFalse($this->object->has('test'));
         $callable = function () { $a = new \stdClass(); $a->mt = microtime(true); return $a; };
-        $this->object->set('test', $callable, true);
+        $this->object->set('test', CallableDefinition::factory($callable)->setShared(true));
         $this->assertTrue($this->object->has('test'));
-        $this->assertTrue($this->object->isShared('test'));
         $inst = $this->object->get('test');
         $this->assertInstanceOf('stdClass', $inst);
         $this->assertTrue($inst === $this->object->get('test'));
@@ -55,12 +54,7 @@ class ContainerTest extends \PHPUnit_Framework_TestCase {
         $this->setExpectedException('Fwk\Di\Exceptions\DefinitionNotFoundException');
         $inst = $this->object->get('test');
     }
-    
-    public function testInvalidSharedDefinition() {
-        $this->setExpectedException('Fwk\Di\Exceptions\DefinitionNotFoundException');
-        $inst = $this->object->isShared('test');
-    }
-    
+
     /**
      *
      */
@@ -80,7 +74,6 @@ class ContainerTest extends \PHPUnit_Framework_TestCase {
         $this->testSharedSetAndGetCallable();
         
         $this->assertTrue($this->object->has('test'));
-        $this->assertTrue($this->object->isShared('test'));
         $inst = $this->object->get('test');
         $this->object->unregister('test');
         $this->assertFalse($this->object->has('test'));
@@ -96,7 +89,6 @@ class ContainerTest extends \PHPUnit_Framework_TestCase {
         $def = ClassDefinition::factory('stdClass');
         $this->object->set('test', $def, false);
         $this->assertTrue($this->object->has('test'));
-        $this->assertFalse($this->object->isShared('test'));
         $inst = $this->object->get('test');
         $this->assertInstanceOf('\stdClass', $inst);
         $this->assertFalse($inst === $this->object->get('test'));
@@ -105,9 +97,8 @@ class ContainerTest extends \PHPUnit_Framework_TestCase {
     public function testSharedSetAndGetDefinition() {
         $this->assertFalse($this->object->has('test'));
         $def = ClassDefinition::factory('stdClass');
-        $this->object->set('test', $def, true);
+        $this->object->set('test', $def->setShared(true));
         $this->assertTrue($this->object->has('test'));
-        $this->assertTrue($this->object->isShared('test'));
         $inst = $this->object->get('test');
         $this->assertInstanceOf('\stdClass', $inst);
         $this->assertTrue($inst === $this->object->get('test'));
@@ -122,19 +113,7 @@ class ContainerTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals('one+one=two', $this->object->getProperty('testPhrase'));
     }
 
-    public function testDefinitionData()
-    {
-        $this->object->set('testDef', 'definitionDataTest', false, array('one' => 1, 'two' => 2, 'three' => 3));
-
-        $data = $this->object->getDefinitionData('testDef');
-        $this->assertTrue(is_array($data));
-        $this->assertEquals(3, count($data));
-        foreach ($data as $k => $v) {
-            $this->assertFalse(strpos($k, '__fwk_di', 0));
-        }
-    }
-
-    public function testServicesSearch()
+    public function __testServicesSearch()
     {
         $this->object->set('testDef', 'definitionDataTest', false, array('dataOne' => true, 'text' => 'hello John'));
         $this->object->set('testDef2', 'definitionDataTest', false, array('dataOne' => false, 'text' => 'hello Doe'));

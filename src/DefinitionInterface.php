@@ -28,60 +28,38 @@
  * @author    Julien Ballestracci <julien@nitronet.org>
  * @copyright 2011-2014 Julien Ballestracci <julien@nitronet.org>
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @link      http://www.nitronet.org/fwk
+ * @link      http://fwk.io/di
  */
-namespace Fwk\Di\Definitions;
-
-use Fwk\Di\Container;
-use Fwk\Di\DefinitionInterface;
-use Fwk\Di\InvokableInterface;
-use Fwk\Di\Exceptions;
-use Fwk\Di\Reference;
+namespace Fwk\Di;
 
 /**
- * Abstract Definition Utility
+ * DefinitionInterface
+ * 
+ * Represents a Definition
  *
- * @category Utilities
+ * @category Interfaces
  * @package  Fwk\Di
  * @author   Julien Ballestracci <julien@nitronet.org>
  * @license  http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @link     http://www.nitronet.org/fwk
+ * @link     http://fwk.io/di
  */
-abstract class AbstractDefinition
+interface DefinitionInterface extends InvokableInterface
 {
     /**
-     * Shared result/instance ?
+     * Defines if the Definition's result/instance should be "shared"
      *
-     * @var bool
-     */
-    protected $shared = false;
-
-    /**
-     * Definition's meta-data
-     *
-     * @var array
-     */
-    protected $data = array();
-
-    /**
-     * @param bool $bool
+     * @param boolean $bool true or false
      *
      * @return DefinitionInterface
      */
-    public function setShared($bool)
-    {
-        $this->shared = (bool)$bool;
-
-        return $this;
-    }
+    public function setShared($bool);
 
     /**
-     * @return bool
+     * Tells if the Definition's result/instance is shared or not
+     *
+     * @return boolean
      */
-    public function isShared()
-    {
-        return $this->shared;
-    }
+    public function isShared();
 
     /**
      * Sets (erase) definition meta-data
@@ -90,22 +68,14 @@ abstract class AbstractDefinition
      *
      * @return DefinitionInterface
      */
-    public function setData(array $data)
-    {
-        $this->data = $data;
-
-        return $this;
-    }
+    public function setData(array $data);
 
     /**
      * Returns all definition meta-data
      *
      * @return array
      */
-    public function getData()
-    {
-        return $this->data;
-    }
+    public function getData();
 
     /**
      * Returns a meta-data parameter ($param) or $default if not defined
@@ -115,10 +85,7 @@ abstract class AbstractDefinition
      *
      * @return mixed
      */
-    public function get($param, $default = null)
-    {
-        return (array_key_exists($param, $this->data) ? $this->data[$param] : $default);
-    }
+    public function get($param, $default = null);
 
     /**
      * Defines a meta-data parameter
@@ -128,12 +95,7 @@ abstract class AbstractDefinition
      *
      * @return DefinitionInterface
      */
-    public function set($param, $value)
-    {
-        $this->data[$param] = $value;
-
-        return $this;
-    }
+    public function set($param, $value);
 
     /**
      * Tells if definition's meta-data matches $dataQuery
@@ -142,8 +104,5 @@ abstract class AbstractDefinition
      *
      * @return boolean
      */
-    public function match(array $query)
-    {
-
-    }
+    public function match(array $query);
 }

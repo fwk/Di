@@ -33,7 +33,7 @@
 namespace Fwk\Di\Definitions;
 
 use Fwk\Di\Container;
-use Fwk\Di\InvokableInterface;
+use Fwk\Di\DefinitionInterface;
 
 /**
  * ArrayDefinition
@@ -46,7 +46,7 @@ use Fwk\Di\InvokableInterface;
  * @license  http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link     http://www.nitronet.org/fwk
  */
-class ArrayDefinition extends AbstractDefinition implements InvokableInterface
+class ArrayDefinition extends AbstractArgsDefinition implements DefinitionInterface
 {
     /**
      * The array

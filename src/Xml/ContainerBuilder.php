@@ -146,8 +146,7 @@ class ContainerBuilder
         foreach ($definitions as $name => $infos) {
             $container->set(
                 $container->propertizeString($name), 
-                $container->propertizeString($infos['value']),
-                (bool)$this->transformValueType($infos['shared'])
+                $container->propertizeString($infos['value'])
             );
         }
     }
@@ -177,8 +176,11 @@ class ContainerBuilder
                     $mnfos['arguments']
                 );
             }
+
+            $def->setShared($shared)
+                ->setData($infos['data']);
             
-            $container->set($name, $def, $shared, $infos['data']);
+            $container->set($name, $def);
         }
     }
     
@@ -206,8 +208,12 @@ class ContainerBuilder
                     $array[] = $val;
                 }
             }
-            
-            $container->set($name, new ArrayDefinition($array), $shared, $infos['data']);
+
+            $def = ArrayDefinition::factory($array)
+                    ->setShared($shared)
+                    ->setData($infos['data']);
+
+            $container->set($name, $def);
         }
     }
 

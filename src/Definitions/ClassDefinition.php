@@ -33,10 +33,11 @@
 namespace Fwk\Di\Definitions;
 
 use Fwk\Di\Container;
+use Fwk\Di\DefinitionInterface;
 use Fwk\Di\Exception;
 use Fwk\Di\Exceptions\InvalidClassDefinitionException;
-use Fwk\Di\InvokableInterface;
 use Fwk\Di\Exceptions;
+use Fwk\Di\InvokableInterface;
 
 /**
  * ClassDefinition
@@ -49,7 +50,7 @@ use Fwk\Di\Exceptions;
  * @license  http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link     http://www.nitronet.org/fwk
  */
-class ClassDefinition extends AbstractDefinition implements InvokableInterface
+class ClassDefinition extends AbstractArgsDefinition implements DefinitionInterface
 {
     /**
      * Name of the class to be instanciated

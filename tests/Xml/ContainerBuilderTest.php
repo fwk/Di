@@ -30,8 +30,8 @@ class ContainerBuilderTest extends \PHPUnit_Framework_TestCase {
         $this->assertTrue($container->has('myObj'));
         $this->assertInstanceOf(ClassDefinition::class, $container->get('myObj'));
         $this->assertEquals($container->get('myObj'), $container->get('myObj'));
-        $this->assertTrue($container->isShared('myObj'));
-        $this->assertArrayHasKey('testData', $container->getDefinitionData('myObj'));
+        $this->assertTrue($container->getDefinition('myObj')->isShared());
+        $this->assertArrayHasKey('testData', $container->getDefinition('myObj')->getData());
     }
     
     public function testDefinition() {
@@ -40,7 +40,7 @@ class ContainerBuilderTest extends \PHPUnit_Framework_TestCase {
         $this->object->execute(__DIR__ .'/../test-di.xml', $container);
         $this->assertTrue($container->has('testDef'));
         $this->assertEquals('valueOfDefinition', $container->get('testDef'));
-        $this->assertFalse($container->isShared('testDef'));
+        $this->assertFalse($container->getDefinition('testDef')->isShared());
     }
 
     /**
@@ -76,7 +76,7 @@ class ContainerBuilderTest extends \PHPUnit_Framework_TestCase {
 
         $self = $this;
         $container->on('afterServiceLoaded', function(AfterServiceLoadedEvent $event) use ($self) {
-            $data = $event->getDefinitionData();
+            $data = $event->getDefinition()->getData();
             $self->assertTrue(isset($data['listener-override']));
             $self->assertTrue(isset($data['service-listener']));
         });

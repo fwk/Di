@@ -33,15 +33,16 @@
 namespace Fwk\Di\Events;
 
 use Fwk\Di\Container;
+use Fwk\Di\DefinitionInterface;
 use Fwk\Di\Event;
 
 class BeforeServiceLoadedEvent extends Event
 {
-    public function __construct(Container $container, $serviceName, &$definition, array $definitionData = array())
+    public function __construct(Container $container, $serviceName, DefinitionInterface $definition)
     {
         parent::__construct(
             'beforeServiceLoaded',
-            array('definition' => $definition, 'serviceName' => $serviceName, 'definitionData' => $definitionData),
+            array('definition' => $definition, 'serviceName' => $serviceName),
             $container
         );
     }
@@ -59,32 +60,10 @@ class BeforeServiceLoadedEvent extends Event
     /**
      * Returns the service's definition
      *
-     * @return mixed
+     * @return DefinitionInterface
      */
     public function getDefinition()
     {
         return $this->definition;
-    }
-
-    /**
-     * Returns the data associated with the definition
-     *
-     * @return array
-     */
-    public function getDefinitionData()
-    {
-        return $this->definitionData;
-    }
-
-    /**
-     * Override/update definition data
-     *
-     * @param array $definitionData
-     *
-     * @return void
-     */
-    public function setDefinitionData(array $definitionData)
-    {
-        $this->definitionData = $definitionData;
     }
 }

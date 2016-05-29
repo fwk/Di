@@ -54,14 +54,14 @@ class GeneralEventsTest extends \PHPUnit_Framework_TestCase {
     public function testDataReferenceInEvents()
     {
         $this->object->on('beforeServiceLoaded', function(BeforeServiceLoadedEvent $event) {
-            $data = $event->getDefinitionData();
+            $data = $event->getDefinition()->getData();
             $data['testTwo'] = "test";
-            $event->setDefinitionData($data);
+            $event->getDefinition()->setData($data);
         });
 
         $self = $this;
         $this->object->on('afterServiceLoaded', function(AfterServiceLoadedEvent $event) use ($self) {
-            $data = $event->getDefinitionData();
+            $data = $event->getDefinition()->getData();
             $self->assertTrue(isset($data['testTwo']));
         });
 

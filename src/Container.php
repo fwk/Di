@@ -32,11 +32,12 @@
  */
 namespace Fwk\Di;
 
+use Fwk\Di\Definitions\CallableDefinition;
+use Fwk\Di\Definitions\ScalarDefinition;
 use Fwk\Di\Events\AfterServiceLoadedEvent;
 use Fwk\Di\Events\AfterServiceRegisteredEvent;
 use Fwk\Di\Events\BeforeServiceLoadedEvent;
 use Fwk\Di\Events\BeforeServiceRegisteredEvent;
-use Fwk\Di\Exceptions\DefinitionNotFoundException;
 use Fwk\Di\Exceptions\SearchException;
 use Fwk\Events\Dispatcher;
 use \ArrayAccess;
@@ -58,16 +59,16 @@ class Container extends Dispatcher implements ArrayAccess, ContainerInterface
 {
     /**
      * The objects store
-     * @var array
+     * @var SplObjectStorage
      */
     protected $store = array();
 
     /**
-     * Informations about stored objects
-     * @var array
+     * Shared instances store
+     * @var SplObjectStorage
      */
-    protected $storeData = array();
-    
+    private $_sharedInstances;
+
     /**
      * Container Properties
      * @var array
@@ -93,35 +94,44 @@ class Container extends Dispatcher implements ArrayAccess, ContainerInterface
      */
     public function __construct()
     {
-        $this->set('self', $this, true);
+        $this->store = new SplObjectStorage();
         $this->delegates = new SplObjectStorage();
+        $this->_sharedInstances = new SplObjectStorage();
+        $this->set('self', $this);
     }
     
     /**
      * Registers a definition
      * 
-     * @param string  $name       Identifier
-     * @param mixed   $definition Definition, callable or value
-     * @param boolean $shared     Should the instance be "shared" (singleton)
-     * @param array   $data       Meta-data associated with this definition
-     * 
-     * @return Container 
+     * @param string  $name             Identifier
+     * @param DefinitionInterface|mixed $definition Definition, callable or value
+     *
+     * @return Container
      */
-    public function set($name, $definition, $shared = false, 
-        array $data = array()
-    ) {
-        $event = new BeforeServiceRegisteredEvent($this, $name, $definition, $data);
+    public function set($name, $definition)
+    {
+        if (!$definition instanceof DefinitionInterface) {
+            if (is_callable($definition)) {
+                $definition = CallableDefinition::factory($definition);
+            } else {
+                $wasObj = is_object($definition);
+                $definition = ScalarDefinition::factory($definition);
+                if ($wasObj) {
+                    $definition->setShared(true);
+                    $this->_sharedInstances->attach($definition, $name);
+                }
+            }
+        }
+
+        $event = new BeforeServiceRegisteredEvent($this, $name, $definition);
         $this->notify($event);
 
         if ($event->isStopped()) {
             return $this;
         }
 
-        $data = array_merge(array('__fwk_di_shared'   => $shared), $data);
-        $this->store[$name] = $definition;
-        $this->storeData[$name] = $data;
-
-        $this->notify(new AfterServiceRegisteredEvent($this, $name, $definition, $data));
+        $this->store->attach($definition, $name);
+        $this->notify(new AfterServiceRegisteredEvent($this, $name, $definition));
 
         return $this;
     }
@@ -143,73 +153,48 @@ class Container extends Dispatcher implements ArrayAccess, ContainerInterface
         if (!$this->has($name)) {
             return $this->getFromDelegate($name);
         }
-        
-        $data       =& $this->storeData[$name];
-        if ($data['__fwk_di_shared'] === true
-            && isset($data['__fwk_di_shared_inst'])
-        ) {
-            return $data['__fwk_di_shared_inst'];
+
+        foreach ($this->store as $def) {
+            if ($this->store->getInfo() === $name) {
+                $definition = $def;
+                break;
+            }
         }
 
-        $definition = $this->store[$name];
-        $event      = new BeforeServiceLoadedEvent($this, $name, $definition, $data);
+        /** @var DefinitionInterface $definition */
+        if ($definition->isShared()) {
+            foreach ($this->_sharedInstances as $inst) {
+                if ($this->_sharedInstances->getInfo() === $name) {
+                    return $inst;
+                }
+            }
+        }
 
+        $event      = new BeforeServiceLoadedEvent($this, $name, $definition);
         $this->notify($event);
 
-        // the event is stopped
+        // the event has been stopped
         if ($event->isStopped()) {
             $return = $event->getReturnValue();
 
-            if ($data['__fwk_di_shared'] === true) {
-                $this->storeData[$name]['__fwk_di_shared_inst'] = $return;
+            if ($definition->isShared()) {
+                $this->_sharedInstances->attach($return, $name);
             }
 
             return $return;
         }
 
-        $this->storeData[$name] = $data = $event->getDefinitionData();
-
-        if ($definition instanceof InvokableInterface) {
-            $return = $definition->invoke($this, $name);
-        } elseif (is_callable($definition)) {
-            $return = call_user_func_array($definition, array($this));
-        } else {
-            $return = $definition;
-        }
-        
-        if ($data['__fwk_di_shared'] === true) {
-            $this->storeData[$name]['__fwk_di_shared_inst'] = $return;
+        $return = $definition->invoke($this, $name);
+        if ($definition->isShared()) {
+            $this->_sharedInstances->attach($return, $name);
         }
 
-        $afterEvent = new AfterServiceLoadedEvent($this, $name, $definition, $data, $return);
+        $afterEvent = new AfterServiceLoadedEvent($this, $name, $definition, $return);
         $this->notify($afterEvent);
-
-        $this->storeData[$name] = $afterEvent->getDefinitionData();
 
         return $return;
     }
 
-    /**
-     * Returns data associated with the given definition (without internals).
-     *
-     * @param string $name Service name
-     *
-     * @throws DefinitionNotFoundException
-     */
-    public function getDefinitionData($name)
-    {
-        if (!$this->has($name)) {
-            throw new DefinitionNotFoundException($name);
-        }
-
-        $data = $this->storeData[$name];
-        $keys = array_filter(array_keys($data), function($key) {
-            return (strpos($key, '__fwk_di', 0) === false);
-        });
-
-        return array_intersect_key($data, array_flip($keys));
-    }
-    
     /**
      * Loads properties from an INI file as definitions. 
      * Theses properties can then be referenced like @propName in other 
@@ -321,29 +306,15 @@ class Container extends Dispatcher implements ArrayAccess, ContainerInterface
             throw new Exceptions\DefinitionNotFoundException($name);
         }
 
-        unset($this->storeData[$name]);
-        unset($this->store[$name]);
-        
-        return true;
-    }
-    
-    /**
-     * Tells if a definition has been flagged has "shared" (singleton)
-     * 
-     * @param string $name Identifier
-     * 
-     * @throws Exceptions\DefinitionNotFoundException if $name isn't a valid identifier
-     * @return boolean
-     */
-    public function isShared($name)
-    {
-        if (!$this->has($name)) {
-            throw new Exceptions\DefinitionNotFoundException($name);
+        $this->store->detach($this->getDefinition($name));
+        foreach ($this->_sharedInstances as $inst => $defName) {
+            if ($defName === $name) {
+                $this->_sharedInstances->detach((object)$inst);
+                break;
+            }
         }
-        
-        $data = $this->storeData[$name];
-        
-        return (bool)$data['__fwk_di_shared'];
+
+        return true;
     }
     
     /**
@@ -355,7 +326,32 @@ class Container extends Dispatcher implements ArrayAccess, ContainerInterface
      */
     public function has($name)
     {
-        return array_key_exists($name, $this->store);
+        foreach ($this->store as $def) {
+            if ($this->store->getInfo() === $name) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Returns a Definition
+     *
+     * @param string $name Identifier
+     *
+     * @return DefinitionInterface
+     * @throws Exceptions\DefinitionNotFoundException if $name isn't a valid identifier
+     */
+    public function getDefinition($name)
+    {
+        foreach ($this->store as $def) {
+            if ($this->store->getInfo() === $name) {
+                return $def;
+            }
+        }
+
+        throw new Exceptions\DefinitionNotFoundException($name);
     }
     
     /**

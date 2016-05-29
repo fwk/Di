@@ -7,8 +7,6 @@ class TestXmlListenerOverride
 {
     public function onBeforeServiceLoaded(BeforeServiceLoadedEvent $event)
     {
-        $data = $event->getDefinitionData();
-        $data['listener-override'] = true;
-        $event->setDefinitionData($data);
+        $event->getDefinition()->set('listener-override', true);
     }
 }

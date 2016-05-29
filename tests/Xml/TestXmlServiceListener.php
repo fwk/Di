@@ -7,8 +7,6 @@ class TestXmlServiceListener
 {
     public function onBeforeServiceLoaded(BeforeServiceLoadedEvent $event)
     {
-        $data = $event->getDefinitionData();
-        $data['service-listener'] = true;
-        $event->setDefinitionData($data);
+        $event->getDefinition()->set('service-listener', true);
     }
 }

@@ -33,19 +33,19 @@
 namespace Fwk\Di\Events;
 
 use Fwk\Di\Container;
+use Fwk\Di\DefinitionInterface;
 use Fwk\Di\Event;
 
 class AfterServiceLoadedEvent extends Event
 {
-    public function __construct(Container $container, $serviceName, &$definition, $definitionData, &$valueObject)
+    public function __construct(Container $container, $serviceName, DefinitionInterface $definition, &$valueObject)
     {
         parent::__construct(
             'afterServiceLoaded',
             array(
                 'definition'    => $definition,
                 'serviceName'   => $serviceName,
-                'valueObject'   => $valueObject,
-                'definitionData'    => $definitionData
+                'valueObject'   => $valueObject
             ),
             $container
         );
@@ -64,7 +64,7 @@ class AfterServiceLoadedEvent extends Event
     /**
      * Returns the service's definition
      *
-     * @return mixed
+     * @return DefinitionInterface
      */
     public function getDefinition()
     {
@@ -79,27 +79,5 @@ class AfterServiceLoadedEvent extends Event
     public function getValueObject()
     {
         return $this->valueObject;
-    }
-
-    /**
-     * Returns the data associated with the definition
-     *
-     * @return array
-     */
-    public function getDefinitionData()
-    {
-        return $this->definitionData;
-    }
-
-    /**
-     * Override/update definition data
-     *
-     * @param array $definitionData
-     *
-     * @return void
-     */
-    public function setDefinitionData(array $definitionData)
-    {
-        $this->definitionData = $definitionData;
     }
 }
