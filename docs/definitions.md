@@ -39,7 +39,7 @@ use Fwk\Di\Definitions\ClassDefinition;
 $container->set('db', ClassDefinition::factory(
   'MyApp\Db\Connection', // full classname
   array('@db.config') // constructor parameters
-)->addMethodCall('setCharset', array('utf8'))); // optional method call
+)->addMethodCall('setCharset', 'utf8')); // optional method call
 ```
 or using XML:
 ``` xml
@@ -50,6 +50,7 @@ or using XML:
 <class-definition name="db" class="MyApp\Db\Database">
     <argument>mysql:dbname=testdb;host=127.0.0.1</argument>
     <argument>@db.config</argument>
+    <call method="setCharset">utf8</call>
 </class-definition> 
 ```
 
@@ -65,7 +66,4 @@ $container->set('std', function($container) {
 
 ## LazyClassDefinition
 
-Describes a [PHP Object](http://php.net/object). It simply call the function each time you require the service (except if [shared](./exemples.md#Shared-instances))
-
-
-Describes a simple [PHP Object](http://php.net/object). This is the main type of definition as it is the one that actually construct your objects. 
+TODO

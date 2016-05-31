@@ -1,5 +1,5 @@
 * [Introduction](./README.md)
 * [Exemples](./exemples.md)
 * [Definitions](./definitions.md)
-* [XML Container Builder](./xml-container-builder.md)
+* [XML Container](./xml.md)
 * [Advanced usages](./advanced-usages.md)

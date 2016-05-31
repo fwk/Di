@@ -16,4 +16,4 @@ and finally install it!
 $ php composer.phar install (or update)
 ```
 
-Fwk\Di is now ready to [use](./usage.md) !
+Fwk\Di is now ready to [use](./exemples.md) !

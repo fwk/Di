@@ -6,13 +6,13 @@ Dependency Injection is a Design Pattern helping to organize dependencies and th
 
 Fwk\Di comes with useful features out of the box:
 
-* Events: implement rapidly and easily extensions and plugins
+* Lightweight: The lighter, the faster :zap: 
+* [Events](./advanced-usages.md): implement rapidly and easily extensions and plugins
 * Proxies: resource-hungry objects can be "proxied" when they're only used as a reference.
-* Lightweight: The lighter, the faster.
 
 ### Vocabulary
 
-* Dependency: Something (an Object, an Array, a Resource ...) the application will require at runtime. 
+* Dependency: Something (an Object, an Array, a scalar...) the application will require at runtime. 
 * Service: Common term for Dependency.
 * Definition: The description of a dependency (read: the way it is created).
 * Property: String parameter defined in the container usable in Definitions.
@@ -76,5 +76,5 @@ Of course, this is a really simple exemple of what can be done with Fwk\Di.
 
 * [Exemples usages](./exemples.md)
 * [Definitions Types](./definitions.md)
-* [Write Definitions using XML](./xml-container-builder.md)
-* [Extend functionalities with Listeners](./advanced-usages.md)
+* [Write Definitions using XML](./xml.md)
+* [Advanced Usages](./advanced-usages.md)
