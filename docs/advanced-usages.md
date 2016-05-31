@@ -47,9 +47,11 @@ Imagine a LoginManager having multiples LoginProvider (eg: FormProvider, Faceboo
 First, define a way to identify Providers definitions = create a parameter ```loginProvider``` set to ```true```:
 
 ``` php
-$fbProvider = new ClassDefinition('MyApp\Providers\FacebookProvider', array(/* ... */));
-// define the charset
-$definition->addMethodCall('setCharset', array('utf8'));
+$container->set(
+    'login.provider.fb', 
+    ClassDefinition::factory('MyApp\Providers\FacebookProvider', array(/* fb.config */))
+        ->set('loginProvider', true)
+);
 ```
 or using XML:
 ``` xml
