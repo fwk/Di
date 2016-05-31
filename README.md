@@ -84,11 +84,11 @@ $container->set(
    'db',
    new ClassDefinition('App\Services\Database', 
     array(
-        '@db.hostname', 
-        '@db.user', 
-        '@db.password',
-        '@db.driver', 
-        '@db.database', 
+        ':db.hostname', 
+        ':db.user', 
+        ':db.password',
+        ':db.driver', 
+        ':db.database', 
     )),
     true
 );
