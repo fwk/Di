@@ -8,7 +8,7 @@
 [![Latest Unstable Version](https://poser.pugx.org/fwk/di/v/unstable.png)](https://packagist.org/packages/fwk/di) 
 [![License](https://poser.pugx.org/fwk/di/license.png)](https://packagist.org/packages/fwk/di)
 
-Dependency Injection Container for PHP 5.3+ 
+Dependency Injection Container for PHP 5.5+ 
 
 Learn more in [docs/](./docs) !
 

@@ -18,7 +18,7 @@
         "container-interop/container-interop": "1.*"
     },
     "require-dev": {
-        "zendframework/zend-stdlib": "dev-master",
+        "zendframework/zend-stdlib": "3.0.*",
         "ocramius/proxy-manager": "1.0.*"
     },
     "suggest": {
