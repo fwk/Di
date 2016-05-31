@@ -1,72 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dependency-injection>
-    <!--
-        load ini properties.
-            attributes:
-                - category: (optional) if you use ini categories
-    -->
-    <ini category="iniCategory">:baseDir/test-props.ini</ini>
-
-    <!--
-        add a listener (class)
-    -->
+    <ini>:baseDir/test-props.ini</ini>
     <listener class="Fwk\Di\Tests\Xml\TestXmlListenerOverride" />
+    <listener service="listener.service" />
 
-    <!--
-        add a listener (from another dependency)
-    -->
-    <listener service="my.listener" />
-
-    <!-- ClassDefinition:
-            attributes:
-                - name: the definition's name
-                - class: full class name (@references and :properties accepted)
-                - shared: (optional) is the instance shared ?
-                - lazy: (optional)  should the container proxy this class until it is really used ?
-     -->
-    <class-definition name="myObj" class="Fwk\Di\Definitions\ClassDefinition" shared="true" lazy="false">
-        <!-- constructor argument -->
+    <class-definition name="myObj" class="Fwk\Di\Definitions\ClassDefinition" shared="true">
         <argument>\stdClass</argument>
-
-        <!-- method called after instance is created (:properties accepted) -->
         <call method="addArgument">
-            <!-- method argument (@references and :properties accepted) -->
-            <argument>@dummy.service</argument>
+            <argument>ArgOne</argument>
         </call>
-
-        <!-- definition's meta-data -->
         <data>
-            <!--
-                data parameter: key = value (@references and :properties accepted)
-            -->
             <param key="testData">value</param>
         </data>
     </class-definition>
-
-    <!--
-        Simple scalar (string) definition
-            attributes:
-                - name: definition's name
-            value: the value (@references and :properties accepted)
-    -->
     <definition name="testDef">valueOfDefinition</definition>
-
-    <!--
-        Array definition
-            attributes:
-                - name: definition's name
-    -->
     <array-definition name="arrayDef">
-        <!-- array parameters.
-                attributes:
-                    - key: (optional)
-                value: the parameter's value (@references and :properties accepted)
-        -->
         <param key="debug">true</param>
         <param key="iniProp">:iniProp</param>
-
         <data>
             <param key="testData">value</param>
         </data>
     </array-definition>
+    <class-definition name="listener.service" class="Fwk\Di\Tests\Xml\TestXmlServiceListener" />
 </dependency-injection>
