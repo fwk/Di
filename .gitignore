@@ -1,11 +1,9 @@
 vendor
 /phpunit.xml
-/hljs/
 /test.php
 /build/
-/app
 /composer.lock
 /build.xml
-/.idea/
 /phing-*
 /bin/
+.idea*
