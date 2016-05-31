@@ -16,7 +16,7 @@
         "fwk/xml": "dev-master"
     },
     "require-dev": {
-        "ocramius/proxy-manager": "dev-master"
+        "ocramius/proxy-manager": "1.*"
     },
     "suggest": {
         "ocramius/proxy-manager": "Allows usage of Lazy Services Loading (ProxyManager)"
