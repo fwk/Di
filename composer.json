@@ -10,11 +10,10 @@
             "email": "julien@nitronet.org"
         }
     ],
-    "minimum-stability": "dev",
     "require": {
         "php": ">=5.5",
-        "fwk/xml": "dev-master",
-        "fwk/events": "dev-master",
+        "fwk/xml": "1.*",
+        "fwk/events": "2.*",
         "container-interop/container-interop": "1.*"
     },
     "require-dev": {
